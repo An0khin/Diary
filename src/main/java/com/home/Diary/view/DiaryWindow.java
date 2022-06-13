@@ -1,6 +1,13 @@
 package com.home.Diary.view;
 
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.table.*;
+
+import com.home.Diary.model.Record;
+import com.home.Diary.viewmodel.Diary;
+
 import javax.swing.*;
 /*
  * Created by JFormDesigner on Mon Jun 13 23:55:52 YEKT 2022
@@ -11,7 +18,25 @@ import javax.swing.*;
 /**
  * @author get
  */
-public class DiaryWindow  {
+public class DiaryWindow implements Observer{
+	
+	private Diary diary;
+	private DefaultTableModel  tableModel;
+	
+	public DiaryWindow(Diary diary) {
+		this.diary = diary;
+		diary.addObserver(this);
+		
+		initComponents();
+	}
+	
+	@Override
+	public void update(Observable o, Object arg) {		
+		for(Record rec : diary.getList()) {
+			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
+		}
+		
+	}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -36,6 +61,7 @@ public class DiaryWindow  {
 		//======== Diary ========
 		{
 			Diary.setTitle("My Diary");
+			Diary.setVisible(true);
 			Container DiaryContentPane = Diary.getContentPane();
 			DiaryContentPane.setLayout(new BorderLayout());
 
@@ -126,6 +152,16 @@ public class DiaryWindow  {
 			Diary.setLocationRelativeTo(Diary.getOwner());
 		}
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
+		
+		tableModel = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) { //using for disable editable rows
+				return false;
+			}
+		};
+		
+		recordsTable.setModel(tableModel);
+		
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
