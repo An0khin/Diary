@@ -7,6 +7,16 @@ public class Record {
 	private String title;
 	private Date lastUpdate;
 	private String description;
+	private String content;
+	
+	public Record(Date date, String title, Date lastUpdate, String description, String content) {
+		super();
+		this.date = date;
+		this.title = title;
+		this.lastUpdate = lastUpdate;
+		this.description = description;
+		this.content = content;
+	}
 	
 	public Date getDate() {
 		return date;
@@ -32,4 +42,12 @@ public class Record {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+	
 }

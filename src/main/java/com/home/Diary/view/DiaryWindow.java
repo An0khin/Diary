@@ -1,11 +1,13 @@
 package com.home.Diary.view;
 
 import java.awt.*;
+import java.util.*;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.table.*;
 
 import com.home.Diary.model.Record;
+import com.home.Diary.view.listeners.NewButtonListener;
 import com.home.Diary.viewmodel.Diary;
 
 import javax.swing.*;
@@ -22,25 +24,30 @@ public class DiaryWindow implements Observer{
 	
 	private Diary diary;
 	private DefaultTableModel  tableModel;
+	private NewButtonListener newButtonListener;
 	
 	public DiaryWindow(Diary diary) {
 		this.diary = diary;
 		diary.addObserver(this);
 		
+		newButtonListener = new NewButtonListener(diary);
+		
 		initComponents();
 	}
 	
 	@Override
-	public void update(Observable o, Object arg) {		
+	public void update(Observable o, Object arg) {
+		for(int i = 0; i < tableModel.getRowCount(); i++) {
+			tableModel.removeRow(i);
+		}
 		for(Record rec : diary.getList()) {
 			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
 		}
-		
 	}
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		Diary = new JFrame();
+		diaryWindow = new JFrame();
 		menuBar1 = new JMenuBar();
 		menuFile = new JMenu();
 		menuItem1 = new JMenuItem();
@@ -58,12 +65,12 @@ public class DiaryWindow implements Observer{
 		panelInfo = new JPanel();
 		buttonNew = new JButton();
 
-		//======== Diary ========
+		//======== diaryWindow ========
 		{
-			Diary.setTitle("My Diary");
-			Diary.setVisible(true);
-			Container DiaryContentPane = Diary.getContentPane();
-			DiaryContentPane.setLayout(new BorderLayout());
+			diaryWindow.setTitle("My Diary");
+			diaryWindow.setVisible(true);
+			Container diaryWindowContentPane = diaryWindow.getContentPane();
+			diaryWindowContentPane.setLayout(new BorderLayout());
 
 			//======== menuBar1 ========
 			{
@@ -112,7 +119,7 @@ public class DiaryWindow implements Observer{
 				}
 				menuBar1.add(menuView);
 			}
-			Diary.setJMenuBar(menuBar1);
+			diaryWindow.setJMenuBar(menuBar1);
 
 			//======== mainPanel ========
 			{
@@ -127,6 +134,23 @@ public class DiaryWindow implements Observer{
 
 						//---- recordsTable ----
 						recordsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+						recordsTable.setModel(new DefaultTableModel(
+							new Object[][] {
+								{null, ""},
+								{null, null},
+							},
+							new String[] {
+								"DATE", "TITLE"
+							}
+						) {
+							Class<?>[] columnTypes = new Class<?>[] {
+								Date.class, String.class
+							};
+							@Override
+							public Class<?> getColumnClass(int columnIndex) {
+								return columnTypes[columnIndex];
+							}
+						});
 						scrollPaneRecordsTable.setViewportView(recordsTable);
 					}
 					panelRecords.add(scrollPaneRecordsTable);
@@ -147,13 +171,13 @@ public class DiaryWindow implements Observer{
 				buttonNew.setMinimumSize(new Dimension(33000, 25));
 				mainPanel.add(buttonNew);
 			}
-			DiaryContentPane.add(mainPanel, BorderLayout.CENTER);
-			Diary.pack();
-			Diary.setLocationRelativeTo(Diary.getOwner());
+			diaryWindowContentPane.add(mainPanel, BorderLayout.CENTER);
+			diaryWindow.pack();
+			diaryWindow.setLocationRelativeTo(diaryWindow.getOwner());
 		}
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 		
-		tableModel = new DefaultTableModel() {
+		tableModel = new DefaultTableModel(null, new String[] {"DATE", "TITLE"}) {
 			@Override
 			public boolean isCellEditable(int row, int column) { //using for disable editable rows
 				return false;
@@ -161,11 +185,12 @@ public class DiaryWindow implements Observer{
 		};
 		
 		recordsTable.setModel(tableModel);
+		buttonNew.addActionListener(newButtonListener);
 		
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	private JFrame Diary;
+	private JFrame diaryWindow;
 	private JMenuBar menuBar1;
 	private JMenu menuFile;
 	private JMenuItem menuItem1;

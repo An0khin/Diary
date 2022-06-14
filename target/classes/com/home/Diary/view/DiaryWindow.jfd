@@ -20,24 +20,6 @@ new FormModel {
 						add( new FormComponent( "javax.swing.JTable" ) {
 							name: "recordsTable"
 							"selectionMode": 1
-							"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
-								add( new java.util.Vector {
-									add( "Mon Jan 23 22:13:32" )
-									add( "First" )
-								} )
-							}, new java.util.Vector {
-								add( "DATE" )
-								add( "TITLE" )
-							}, new java.util.Vector {
-								add( class java.lang.String )
-								add( class java.lang.String )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-							} )
 						} )
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {

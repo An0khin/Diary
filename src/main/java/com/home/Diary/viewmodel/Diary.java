@@ -22,4 +22,9 @@ public class Diary extends Observable {
 	public List<Record> getList() {
 		return records.getList();
 	}
+	
+	public void addRecord(Record rec) {
+		records.addRecord(rec);
+		change();
+	}
 }
