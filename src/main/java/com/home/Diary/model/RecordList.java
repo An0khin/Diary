@@ -18,4 +18,20 @@ public class RecordList {
 	public void addRecord(Record rec) {
 		records.add(rec);
 	}
+	
+	public Record getRecordByDate(Date date) {
+		Record record;
+		
+		for(int i = 0; i < records.size(); i++) {
+			
+			record = records.get(i);
+			
+			if(record.getDate().equals(date)) {
+				return record;
+			}
+			
+		}
+		
+		return null;
+	}
 }

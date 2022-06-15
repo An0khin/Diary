@@ -1,6 +1,8 @@
 package com.home.Diary.view;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.Observable;
 import java.util.Observer;
@@ -20,11 +22,12 @@ import javax.swing.*;
 /**
  * @author get
  */
-public class DiaryWindow implements Observer{
+public class DiaryWindow extends JFrame implements Observer{
 	
 	private Diary diary;
 	private DefaultTableModel  tableModel;
 	private NewButtonListener newButtonListener;
+	private Record currentRecord;
 	
 	public DiaryWindow(Diary diary) {
 		this.diary = diary;
@@ -42,6 +45,53 @@ public class DiaryWindow implements Observer{
 		}
 		for(Record rec : diary.getList()) {
 			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
+		}
+	}
+	
+	public void viewRecord(Record record) {
+		panelInfo.removeAll();
+		panelInfo.updateUI();
+				
+		JLabel[] labels = {
+				new JLabel("INFO"), 
+				new JLabel("Title"),
+				new JLabel(record.getTitle()),
+				new JLabel("Date"),
+				new JLabel(record.getDate().toString()),
+				new JLabel("Last Update"),
+				new JLabel(record.getLastUpdate().toString()),
+				new JLabel("Description")
+		};
+		
+		JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 5);
+		descriptionArea.setEditable(false);
+		descriptionArea.setLineWrap(true);
+		JScrollPane descriptionPane = new JScrollPane(descriptionArea);
+		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+		for(JLabel lbl : labels) {
+			System.out.println(lbl.getText());
+			panelInfo.add(lbl);
+		}
+		
+		panelInfo.add(descriptionPane);
+		
+		panelInfo.updateUI();
+		panelInfo.validate();
+		this.validate();
+	}
+
+	private class TableSelectionListener extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			super.mouseClicked(e);
+			
+			int index = recordsTable.getSelectedRow();
+			
+			currentRecord = diary.getRecordByDate((Date) tableModel.getValueAt(index, 0));
+
+			viewRecord(currentRecord);
 		}
 	}
 
@@ -186,6 +236,7 @@ public class DiaryWindow implements Observer{
 		
 		recordsTable.setModel(tableModel);
 		buttonNew.addActionListener(newButtonListener);
+		recordsTable.addMouseListener(new TableSelectionListener());
 		
 	}
 

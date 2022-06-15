@@ -4,7 +4,7 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.BorderLayout ) ) {
-			name: "Diary"
+			name: "diaryWindow"
 			"title": "My Diary"
 			"visible": true
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
@@ -20,6 +20,28 @@ new FormModel {
 						add( new FormComponent( "javax.swing.JTable" ) {
 							name: "recordsTable"
 							"selectionMode": 1
+							"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
+								add( new java.util.Vector {
+									add( null )
+									add( "" )
+								} )
+								add( new java.util.Vector {
+									add( null )
+									add( null )
+								} )
+							}, new java.util.Vector {
+								add( "DATE" )
+								add( "TITLE" )
+							}, new java.util.Vector {
+								add( class java.util.Date )
+								add( class java.lang.String )
+							}, new java.util.Vector {
+								add( null )
+								add( null )
+							}, new java.util.Vector {
+								add( null )
+								add( null )
+							} )
 						} )
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {

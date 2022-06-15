@@ -1,5 +1,6 @@
 package com.home.Diary.viewmodel;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
@@ -26,5 +27,9 @@ public class Diary extends Observable {
 	public void addRecord(Record rec) {
 		records.addRecord(rec);
 		change();
+	}
+	
+	public Record getRecordByDate(Date date) {
+		return records.getRecordByDate(date);
 	}
 }
