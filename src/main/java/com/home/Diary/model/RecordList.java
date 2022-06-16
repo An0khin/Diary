@@ -19,6 +19,10 @@ public class RecordList {
 		records.add(rec);
 	}
 	
+	public void delete(Record rec) {
+		records.remove(rec);
+	}
+	
 	public Record getRecordByDate(Date date) {
 		Record record;
 		

@@ -7,6 +7,7 @@ new FormModel {
 			name: "diaryWindow"
 			"title": "My Diary"
 			"visible": true
+			"minimumSize": new java.awt.Dimension( 650, 525 )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
 				"axis": 1
 			} ) {
@@ -20,35 +21,12 @@ new FormModel {
 						add( new FormComponent( "javax.swing.JTable" ) {
 							name: "recordsTable"
 							"selectionMode": 1
-							"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
-								add( new java.util.Vector {
-									add( null )
-									add( "" )
-								} )
-								add( new java.util.Vector {
-									add( null )
-									add( null )
-								} )
-							}, new java.util.Vector {
-								add( "DATE" )
-								add( "TITLE" )
-							}, new java.util.Vector {
-								add( class java.util.Date )
-								add( class java.lang.String )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-							} )
 						} )
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
 						"axis": 1
 					} ) {
 						name: "panelInfo"
-						"maximumSize": new java.awt.Dimension( 33000, 0 )
 					} )
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
@@ -67,10 +45,6 @@ new FormModel {
 					name: "menuFile"
 					"text": "File"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem1"
-						"text": "Open"
-					} )
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuFileItemSave"
 						"text": "Save"
 					} )
@@ -79,15 +53,15 @@ new FormModel {
 					name: "menuEdit"
 					"text": "Edit"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem2"
+						name: "menuEditNew"
 						"text": "New"
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem3"
+						name: "menuEditEdit"
 						"text": "Edit"
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem4"
+						name: "menuEditDelete"
 						"text": "Delete"
 					} )
 				} )
@@ -101,8 +75,8 @@ new FormModel {
 				} )
 			}
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 500, 205 )
-			"size": new java.awt.Dimension( 400, 300 )
+			"location": new java.awt.Point( 435, 115 )
+			"size": new java.awt.Dimension( 650, 525 )
 		} )
 	}
 }

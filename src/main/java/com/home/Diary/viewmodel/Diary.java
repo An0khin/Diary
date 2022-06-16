@@ -29,6 +29,22 @@ public class Diary extends Observable {
 		change();
 	}
 	
+	public void editRecord(Record rec, Date date, String tile, String descr, String content, Date lastUpd) {
+		rec.setDate(date);
+		rec.setContent(content);
+		rec.setDescription(descr);
+		rec.setLastUpdate(lastUpd);
+		rec.setTitle(tile);
+		
+		change();
+	}
+	
+	public void deleteRecord(Record rec) {
+		records.delete(rec);
+		
+		change();
+	}
+	
 	public Record getRecordByDate(Date date) {
 		return records.getRecordByDate(date);
 	}

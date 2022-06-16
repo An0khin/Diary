@@ -4,15 +4,18 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
-import java.util.Observable;
-import java.util.Observer;
+
 import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
 
 import com.home.Diary.model.Record;
+import com.home.Diary.view.listeners.DeleteButtonListener;
+import com.home.Diary.view.listeners.EditButtonListener;
 import com.home.Diary.view.listeners.NewButtonListener;
 import com.home.Diary.viewmodel.Diary;
 
 import javax.swing.*;
+import javax.swing.JSpinner.DefaultEditor;
 /*
  * Created by JFormDesigner on Mon Jun 13 23:55:52 YEKT 2022
  */
@@ -25,8 +28,10 @@ import javax.swing.*;
 public class DiaryWindow extends JFrame implements Observer{
 	
 	private Diary diary;
-	private DefaultTableModel  tableModel;
+	private DefaultTableModel tableModel;
 	private NewButtonListener newButtonListener;
+	private EditButtonListener editButtonListener;
+	private DeleteButtonListener deleteButtonListener;
 	private Record currentRecord;
 	
 	public DiaryWindow(Diary diary) {
@@ -34,8 +39,15 @@ public class DiaryWindow extends JFrame implements Observer{
 		diary.addObserver(this);
 		
 		newButtonListener = new NewButtonListener(diary);
+		editButtonListener = new EditButtonListener(this); //change
+		deleteButtonListener = new DeleteButtonListener(diary);
 		
 		initComponents();
+	}
+	
+	public void updateListeners() {
+		editButtonListener.setCurrentRecord(currentRecord);
+		deleteButtonListener.setCurrentRecord(currentRecord);
 	}
 	
 	@Override
@@ -46,40 +58,125 @@ public class DiaryWindow extends JFrame implements Observer{
 		for(Record rec : diary.getList()) {
 			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
 		}
+		panelInfo.removeAll();
+		panelInfo.updateUI();
+		
+		currentRecord = null;
+		updateListeners();
 	}
 	
 	public void viewRecord(Record record) {
 		panelInfo.removeAll();
 		panelInfo.updateUI();
+		
+		Font font = new Font("a", Font.BOLD, 12);
+		
+		JTextField infoComp = new JTextField("INFO");
+		infoComp.setHorizontalAlignment(JTextField.CENTER);
+		infoComp.setFont(new Font("a", Font.BOLD, 18));
+		
+		JTextField titleComp = new JTextField("Title");
+		titleComp.setHorizontalAlignment(JTextField.CENTER);
+		titleComp.setFont(font);
+		
+		JTextField dateComp = new JTextField("Date");
+		dateComp.setHorizontalAlignment(JTextField.CENTER);
+		dateComp.setFont(font);
+		
+		JTextField lastUpdateComp = new JTextField("Last Update");
+		lastUpdateComp.setHorizontalAlignment(JTextField.CENTER);
+		lastUpdateComp.setFont(font);
+		
+		JTextField descriptionComp = new JTextField("Description");
+		descriptionComp.setHorizontalAlignment(JTextField.CENTER);
+		descriptionComp.setFont(font);
+		
 				
-		JLabel[] labels = {
-				new JLabel("INFO"), 
-				new JLabel("Title"),
-				new JLabel(record.getTitle()),
-				new JLabel("Date"),
-				new JLabel(record.getDate().toString()),
-				new JLabel("Last Update"),
-				new JLabel(record.getLastUpdate().toString()),
-				new JLabel("Description")
+		JTextComponent[] comps = {
+				infoComp, 
+				titleComp,
+				new JTextField(record.getTitle()),
+				dateComp,
+				new JTextField(record.getDate().toString()),
+				lastUpdateComp,
+				new JTextField(record.getLastUpdate().toString()),
+				descriptionComp
 		};
 		
-		JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 5);
+		JTextArea descriptionArea = new JTextArea(record.getDescription());
 		descriptionArea.setEditable(false);
 		descriptionArea.setLineWrap(true);
 		JScrollPane descriptionPane = new JScrollPane(descriptionArea);
 		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		
-		for(JLabel lbl : labels) {
-			System.out.println(lbl.getText());
-			panelInfo.add(lbl);
+		for(JTextComponent comp : comps) {
+			comp.setEditable(false);
+			panelInfo.add(comp);
 		}
 		
 		panelInfo.add(descriptionPane);
+				
+//		this.validate();
+	}
+	
+	public void openRecord(Record record) { //move to editListener
+		JPanel upperPanel = new JPanel(new BorderLayout());
 		
-		panelInfo.updateUI();
-		panelInfo.validate();
-		this.validate();
+		SpinnerModel modelCurDate = new SpinnerDateModel();
+		modelCurDate.setValue(record.getDate());
+		
+	    JSpinner spinnerForDate = new JSpinner(modelCurDate);
+	    JComponent editor = new JSpinner.DateEditor(spinnerForDate, "EEE MMM dd HH:mm:ss z yyyy");
+	    ((DefaultEditor) editor).getTextField().setEditable(false); //disable editing field of the date by own hands
+	    spinnerForDate.setEditor(editor);
+	    
+		
+//		JTextField dateLbl = new JTextField(record.getDate().toString());
+		
+		JTextField titleField = new JTextField(record.getTitle(), 40);
+		titleField.setHorizontalAlignment(JTextField.CENTER);
+		
+		JLabel lastUpdateLbl = new JLabel(record.getLastUpdate().toString());
+		
+		upperPanel.add(spinnerForDate, BorderLayout.WEST);
+		upperPanel.add(titleField, BorderLayout.CENTER);
+		upperPanel.add(lastUpdateLbl, BorderLayout.EAST);
+		
+		
+		JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 10);
+		descriptionArea.setLineWrap(true);
+		JScrollPane descriptionPane = new JScrollPane(descriptionArea);
+		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		JTextArea contentArea = new JTextArea(record.getContent(), 40, 40);
+		contentArea.setLineWrap(true);
+		JScrollPane contentPane = new JScrollPane(contentArea);
+		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		contentPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		Object[] message = {
+				upperPanel,
+				"Description", descriptionPane,
+				"Content", contentPane
+		};
+		
+		int option = JOptionPane.showConfirmDialog(null, message, "New record", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
+		
+		if(option == JOptionPane.OK_OPTION) {
+			int optionSave = JOptionPane.showConfirmDialog(null, "Do you want to save the changes?", "Save?", JOptionPane.YES_NO_OPTION);
+			
+			if(optionSave == JOptionPane.YES_OPTION) {
+				Date date = (Date) spinnerForDate.getValue();
+				String title = titleField.getText();
+				String description = descriptionArea.getText();
+				String content = contentArea.getText();
+				Date lastUpdate = Calendar.getInstance().getTime();
+				
+				diary.editRecord(record, date, title, description, content, lastUpdate);
+			}
+		}
 	}
 
 	private class TableSelectionListener extends MouseAdapter {
@@ -87,11 +184,19 @@ public class DiaryWindow extends JFrame implements Observer{
 		public void mouseClicked(MouseEvent e) {
 			super.mouseClicked(e);
 			
+			if(e.getClickCount() >= 2) {
+				openRecord(currentRecord);
+			}
+			
 			int index = recordsTable.getSelectedRow();
 			
-			currentRecord = diary.getRecordByDate((Date) tableModel.getValueAt(index, 0));
+			if(index != -1) {
+				currentRecord = diary.getRecordByDate((Date) tableModel.getValueAt(index, 0));
 
-			viewRecord(currentRecord);
+				viewRecord(currentRecord);
+				
+				updateListeners();
+			}			
 		}
 	}
 
@@ -100,12 +205,11 @@ public class DiaryWindow extends JFrame implements Observer{
 		diaryWindow = new JFrame();
 		menuBar1 = new JMenuBar();
 		menuFile = new JMenu();
-		menuItem1 = new JMenuItem();
 		menuFileItemSave = new JMenuItem();
 		menuEdit = new JMenu();
-		menuItem2 = new JMenuItem();
-		menuItem3 = new JMenuItem();
-		menuItem4 = new JMenuItem();
+		menuEditNew = new JMenuItem();
+		menuEditEdit = new JMenuItem();
+		menuEditDelete = new JMenuItem();
 		menuFind = new JMenu();
 		menuView = new JMenu();
 		mainPanel = new JPanel();
@@ -119,6 +223,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		{
 			diaryWindow.setTitle("My Diary");
 			diaryWindow.setVisible(true);
+			diaryWindow.setMinimumSize(new Dimension(650, 525));
 			Container diaryWindowContentPane = diaryWindow.getContentPane();
 			diaryWindowContentPane.setLayout(new BorderLayout());
 
@@ -128,10 +233,6 @@ public class DiaryWindow extends JFrame implements Observer{
 				//======== menuFile ========
 				{
 					menuFile.setText("File");
-
-					//---- menuItem1 ----
-					menuItem1.setText("Open");
-					menuFile.add(menuItem1);
 
 					//---- menuFileItemSave ----
 					menuFileItemSave.setText("Save");
@@ -143,17 +244,17 @@ public class DiaryWindow extends JFrame implements Observer{
 				{
 					menuEdit.setText("Edit");
 
-					//---- menuItem2 ----
-					menuItem2.setText("New");
-					menuEdit.add(menuItem2);
+					//---- menuEditNew ----
+					menuEditNew.setText("New");
+					menuEdit.add(menuEditNew);
 
-					//---- menuItem3 ----
-					menuItem3.setText("Edit");
-					menuEdit.add(menuItem3);
+					//---- menuEditEdit ----
+					menuEditEdit.setText("Edit");
+					menuEdit.add(menuEditEdit);
 
-					//---- menuItem4 ----
-					menuItem4.setText("Delete");
-					menuEdit.add(menuItem4);
+					//---- menuEditDelete ----
+					menuEditDelete.setText("Delete");
+					menuEdit.add(menuEditDelete);
 				}
 				menuBar1.add(menuEdit);
 
@@ -184,30 +285,12 @@ public class DiaryWindow extends JFrame implements Observer{
 
 						//---- recordsTable ----
 						recordsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-						recordsTable.setModel(new DefaultTableModel(
-							new Object[][] {
-								{null, ""},
-								{null, null},
-							},
-							new String[] {
-								"DATE", "TITLE"
-							}
-						) {
-							Class<?>[] columnTypes = new Class<?>[] {
-								Date.class, String.class
-							};
-							@Override
-							public Class<?> getColumnClass(int columnIndex) {
-								return columnTypes[columnIndex];
-							}
-						});
 						scrollPaneRecordsTable.setViewportView(recordsTable);
 					}
 					panelRecords.add(scrollPaneRecordsTable);
 
 					//======== panelInfo ========
 					{
-						panelInfo.setMaximumSize(new Dimension(33000, 0));
 						panelInfo.setLayout(new BoxLayout(panelInfo, BoxLayout.Y_AXIS));
 					}
 					panelRecords.add(panelInfo);
@@ -236,6 +319,9 @@ public class DiaryWindow extends JFrame implements Observer{
 		
 		recordsTable.setModel(tableModel);
 		buttonNew.addActionListener(newButtonListener);
+		menuEditNew.addActionListener(newButtonListener);
+		menuEditEdit.addActionListener(editButtonListener);
+		menuEditDelete.addActionListener(deleteButtonListener);
 		recordsTable.addMouseListener(new TableSelectionListener());
 		
 	}
@@ -244,12 +330,11 @@ public class DiaryWindow extends JFrame implements Observer{
 	private JFrame diaryWindow;
 	private JMenuBar menuBar1;
 	private JMenu menuFile;
-	private JMenuItem menuItem1;
 	private JMenuItem menuFileItemSave;
 	private JMenu menuEdit;
-	private JMenuItem menuItem2;
-	private JMenuItem menuItem3;
-	private JMenuItem menuItem4;
+	private JMenuItem menuEditNew;
+	private JMenuItem menuEditEdit;
+	private JMenuItem menuEditDelete;
 	private JMenu menuFind;
 	private JMenu menuView;
 	private JPanel mainPanel;

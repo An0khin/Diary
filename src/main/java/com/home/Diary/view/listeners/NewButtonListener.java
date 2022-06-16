@@ -1,14 +1,22 @@
 package com.home.Diary.view.listeners;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerModel;
+import javax.swing.JSpinner.DefaultEditor;
 
 import com.home.Diary.model.Record;
 import com.home.Diary.viewmodel.Diary;
@@ -24,7 +32,23 @@ public class NewButtonListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Date date = Calendar.getInstance().getTime();
+		
+		JPanel upperPanel = new JPanel(new BorderLayout());
+		
+		SpinnerModel modelCurDate = new SpinnerDateModel();
+		modelCurDate.setValue(date);
+		
+	    JSpinner spinnerForDate = new JSpinner(modelCurDate);
+	    JComponent editor = new JSpinner.DateEditor(spinnerForDate, "EEE MMM dd HH:mm:ss z yyyy");
+	    ((DefaultEditor) editor).getTextField().setEditable(false); //disable editing field of the date by own hands
+	    spinnerForDate.setEditor(editor);
+	    
 		JTextField titleField = new JTextField(40);
+		titleField.setHorizontalAlignment(JTextField.CENTER);
+		
+		upperPanel.add(spinnerForDate, BorderLayout.WEST);
+		upperPanel.add(titleField, BorderLayout.CENTER);
+		
 		
 		JTextArea descriptionField = new JTextArea(5, 10);
 		descriptionField.setLineWrap(true);
@@ -39,8 +63,7 @@ public class NewButtonListener implements ActionListener {
 		contentPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				
 		Object[] message = {
-				"Date", date,
-				"Title", titleField,
+				upperPanel,
 				"Description", descriptionPane,
 				"Content", contentPane
 		};
