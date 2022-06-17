@@ -12,6 +12,7 @@ import com.home.Diary.model.Record;
 import com.home.Diary.view.listeners.DeleteButtonListener;
 import com.home.Diary.view.listeners.EditButtonListener;
 import com.home.Diary.view.listeners.NewButtonListener;
+import com.home.Diary.view.listeners.OpenButtonListener;
 import com.home.Diary.viewmodel.Diary;
 
 import javax.swing.*;
@@ -29,6 +30,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	
 	private Diary diary;
 	private DefaultTableModel tableModel;
+	private OpenButtonListener openButtonListener;
 	private NewButtonListener newButtonListener;
 	private EditButtonListener editButtonListener;
 	private DeleteButtonListener deleteButtonListener;
@@ -38,14 +40,18 @@ public class DiaryWindow extends JFrame implements Observer{
 		this.diary = diary;
 		diary.addObserver(this);
 		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		openButtonListener = new OpenButtonListener(diary);
 		newButtonListener = new NewButtonListener(diary);
-		editButtonListener = new EditButtonListener(this); //change
+		editButtonListener = new EditButtonListener(diary);
 		deleteButtonListener = new DeleteButtonListener(diary);
 		
 		initComponents();
 	}
 	
 	public void updateListeners() {
+		openButtonListener.setCurrentRecord(currentRecord);
 		editButtonListener.setCurrentRecord(currentRecord);
 		deleteButtonListener.setCurrentRecord(currentRecord);
 	}
@@ -86,11 +92,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		JTextField lastUpdateComp = new JTextField("Last Update");
 		lastUpdateComp.setHorizontalAlignment(JTextField.CENTER);
 		lastUpdateComp.setFont(font);
-		
-		JTextField descriptionComp = new JTextField("Description");
-		descriptionComp.setHorizontalAlignment(JTextField.CENTER);
-		descriptionComp.setFont(font);
-		
+			
 				
 		JTextComponent[] comps = {
 				infoComp, 
@@ -100,82 +102,65 @@ public class DiaryWindow extends JFrame implements Observer{
 				new JTextField(record.getDate().toString()),
 				lastUpdateComp,
 				new JTextField(record.getLastUpdate().toString()),
-				descriptionComp
 		};
-		
-		JTextArea descriptionArea = new JTextArea(record.getDescription());
-		descriptionArea.setEditable(false);
-		descriptionArea.setLineWrap(true);
-		JScrollPane descriptionPane = new JScrollPane(descriptionArea);
-		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		
+				
 		for(JTextComponent comp : comps) {
 			comp.setEditable(false);
 			panelInfo.add(comp);
 		}
 		
-		panelInfo.add(descriptionPane);
-				
-//		this.validate();
 	}
-	
-	public void openRecord(Record record) { //move to editListener
-		JPanel upperPanel = new JPanel(new BorderLayout());
 		
-		SpinnerModel modelCurDate = new SpinnerDateModel();
-		modelCurDate.setValue(record.getDate());
-		
-	    JSpinner spinnerForDate = new JSpinner(modelCurDate);
-	    JComponent editor = new JSpinner.DateEditor(spinnerForDate, "EEE MMM dd HH:mm:ss z yyyy");
-	    ((DefaultEditor) editor).getTextField().setEditable(false); //disable editing field of the date by own hands
-	    spinnerForDate.setEditor(editor);
-	    
-		
-//		JTextField dateLbl = new JTextField(record.getDate().toString());
-		
-		JTextField titleField = new JTextField(record.getTitle(), 40);
-		titleField.setHorizontalAlignment(JTextField.CENTER);
-		
-		JLabel lastUpdateLbl = new JLabel(record.getLastUpdate().toString());
-		
-		upperPanel.add(spinnerForDate, BorderLayout.WEST);
-		upperPanel.add(titleField, BorderLayout.CENTER);
-		upperPanel.add(lastUpdateLbl, BorderLayout.EAST);
-		
-		
-		JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 10);
-		descriptionArea.setLineWrap(true);
-		JScrollPane descriptionPane = new JScrollPane(descriptionArea);
-		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		JTextArea contentArea = new JTextArea(record.getContent(), 40, 40);
-		contentArea.setLineWrap(true);
-		JScrollPane contentPane = new JScrollPane(contentArea);
-		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		contentPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		Object[] message = {
-				upperPanel,
-				"Description", descriptionPane,
-				"Content", contentPane
-		};
-		
-		int option = JOptionPane.showConfirmDialog(null, message, "New record", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
-		
-		if(option == JOptionPane.OK_OPTION) {
-			int optionSave = JOptionPane.showConfirmDialog(null, "Do you want to save the changes?", "Save?", JOptionPane.YES_NO_OPTION);
+	public void openChoiceRecord(Record record) {
+		if(record != null) {
+			JPanel upperPanel = new JPanel(new BorderLayout());
 			
-			if(optionSave == JOptionPane.YES_OPTION) {
-				Date date = (Date) spinnerForDate.getValue();
-				String title = titleField.getText();
-				String description = descriptionArea.getText();
-				String content = contentArea.getText();
-				Date lastUpdate = Calendar.getInstance().getTime();
+			JTextField dateField = new JTextField(record.getDate().toString());
+			dateField.setEditable(false);
 				
-				diary.editRecord(record, date, title, description, content, lastUpdate);
-			}
+			JTextField titleField = new JTextField(record.getTitle(), 40);
+			titleField.setHorizontalAlignment(SwingConstants.CENTER);
+			titleField.setEditable(false);
+
+			JTextField lastUpdateLbl = new JTextField(record.getLastUpdate().toString());
+			lastUpdateLbl.setEditable(false);
+				
+			upperPanel.add(dateField, BorderLayout.WEST);
+			upperPanel.add(titleField, BorderLayout.CENTER);
+			upperPanel.add(lastUpdateLbl, BorderLayout.EAST);
+			
+			JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 40);
+			descriptionArea.setLineWrap(true);
+			descriptionArea.setEditable(false);
+			JScrollPane descriptionPane = new JScrollPane(descriptionArea);
+			descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			
+			JPanel lowerPanel = new JPanel(new BorderLayout());
+			
+			JButton openButton = new JButton("OPEN");
+			openButton.addActionListener(openButtonListener);
+			
+			JButton editButton = new JButton("EDIT");
+			editButton.addActionListener(editButtonListener);
+			
+			lowerPanel.add(openButton, BorderLayout.WEST);
+			lowerPanel.add(editButton, BorderLayout.EAST);
+			
+			Object[] message = {
+					upperPanel,
+					descriptionPane,
+					lowerPanel
+			};
+			
+			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
+			JDialog dialog = pane.createDialog("HOP");
+			
+			openButton.addActionListener((e) -> {dialog.setVisible(false);});
+			editButton.addActionListener((e) -> {dialog.setVisible(false);});
+			
+			pane.remove(pane.getComponents().length - 1);
+			dialog.setVisible(true);
 		}
 	}
 
@@ -185,7 +170,7 @@ public class DiaryWindow extends JFrame implements Observer{
 			super.mouseClicked(e);
 			
 			if(e.getClickCount() >= 2) {
-				openRecord(currentRecord);
+				openChoiceRecord(currentRecord);
 			}
 			
 			int index = recordsTable.getSelectedRow();
