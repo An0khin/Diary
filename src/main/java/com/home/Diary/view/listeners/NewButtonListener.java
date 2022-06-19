@@ -71,11 +71,12 @@ public class NewButtonListener implements ActionListener {
 		int option = JOptionPane.showConfirmDialog(null, message, "New record", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		
 		if(option == JOptionPane.OK_OPTION) {
+			date = (Date) spinnerForDate.getValue();
 			String title = titleField.getText();
 			String description = descriptionField.getText();
 			String content = contentField.getText();
 			
-			System.out.println("HOP");
+//			System.out.println("HOP");
 			
 			diary.addRecord(new Record(date, title, date, description, content));
 		}

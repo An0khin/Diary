@@ -61,14 +61,20 @@ public class DiaryWindow extends JFrame implements Observer{
 		for(int i = 0; i < tableModel.getRowCount(); i++) {
 			tableModel.removeRow(i);
 		}
+		
+		recordsTable.updateUI();
+
 		for(Record rec : diary.getList()) {
 			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
 		}
+		
 		panelInfo.removeAll();
 		panelInfo.updateUI();
 		
 		currentRecord = null;
 		updateListeners();
+		
+		
 	}
 	
 	public void viewRecord(Record record) {

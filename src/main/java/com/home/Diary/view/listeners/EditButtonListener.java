@@ -92,7 +92,7 @@ public class EditButtonListener implements ActionListener {
 					String content = contentArea.getText();
 					Date lastUpdate = Calendar.getInstance().getTime();
 						
-					diary.editRecord(record, date, title, description, content, lastUpdate);
+					diary.editRecord(record, date, title, lastUpdate, description, content);
 				}
 			}
 		}

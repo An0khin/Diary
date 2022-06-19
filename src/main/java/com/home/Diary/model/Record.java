@@ -1,8 +1,15 @@
 package com.home.Diary.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-public class Record {
+import org.com.home.NodeSync;
+
+public class Record implements NodeSync{
 	private Date date;
 	private String title;
 	private Date lastUpdate;
@@ -48,6 +55,33 @@ public class Record {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public Record clone() {
+		return new Record(date, title, lastUpdate, description, content);
+	}
+
+	@Override
+	public List<String> getIds() {
+		List<String> ids = new ArrayList<>();
+		
+		ids.add("date");
+		ids.add(date.toString());
+		
+		return ids;
+	}
+
+	@Override
+	public SortedMap<String, String> getMapElements() {
+		SortedMap<String, String> elements = new TreeMap<>();
+		
+		elements.put("date", date.toString());
+		elements.put("title", title);
+		elements.put("lastUpdate", lastUpdate.toString());
+		elements.put("description", description);
+		elements.put("content", content);
+		
+		return elements;
 	}
 	
 }

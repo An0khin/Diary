@@ -1,16 +1,34 @@
 package com.home.Diary.viewmodel;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
+
+import org.com.home.XMLManager;
 
 import com.home.Diary.model.Record;
 import com.home.Diary.model.RecordList;
 
 public class Diary extends Observable {
 	RecordList records;
+	XMLManager xmlManager;
 	
-	public void change() {
+	public Diary() {
+		File filePath = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Diary");
+		filePath.mkdir();
+		try {
+			Thread.sleep(1);
+		} catch(Exception e) {e.printStackTrace();}
+		
+		filePath = new File(filePath.getPath() + File.separator + "data.xml");
+		
+		xmlManager = new XMLManager(filePath);
+		xmlManager.buildElement("Records");
+	}
+	
+	public void change() {		
 		setChanged();
 		notifyObservers();
 	}
@@ -26,20 +44,24 @@ public class Diary extends Observable {
 	
 	public void addRecord(Record rec) {
 		records.addRecord(rec);
+		xmlManager.addNode(rec.clone(), "Record", "Records");
 		change();
 	}
 	
-	public void editRecord(Record rec, Date date, String tile, String descr, String content, Date lastUpd) {
-		rec.setDate(date);
-		rec.setContent(content);
-		rec.setDescription(descr);
-		rec.setLastUpdate(lastUpd);
-		rec.setTitle(tile);
+	public void editRecord(Record rec, Date date, String title, Date lastUpd, String descr, String content) {
+		xmlManager.editNode(rec.clone(), new Record(date, title, lastUpd, descr, content), "Record", "Records");
 		
+		rec.setDate(date);
+		rec.setTitle(title);
+		rec.setLastUpdate(lastUpd);
+		rec.setDescription(descr);
+		rec.setContent(content);
+				
 		change();
 	}
 	
 	public void deleteRecord(Record rec) {
+		xmlManager.removeNode(rec.clone(), "Record", "Records");
 		records.delete(rec);
 		
 		change();
