@@ -58,9 +58,13 @@ public class DiaryWindow extends JFrame implements Observer{
 	
 	@Override
 	public void update(Observable o, Object arg) {
+		currentRecord = null;
+//		System.out.println(tableModel.getRowCount());
 		for(int i = 0; i < tableModel.getRowCount(); i++) {
 			tableModel.removeRow(i);
 		}
+		
+		tableModel.setRowCount(0);
 		
 		recordsTable.updateUI();
 
@@ -71,9 +75,8 @@ public class DiaryWindow extends JFrame implements Observer{
 		panelInfo.removeAll();
 		panelInfo.updateUI();
 		
-		currentRecord = null;
+		recordsTable.updateUI();
 		updateListeners();
-		
 		
 	}
 	
