@@ -3,9 +3,8 @@ package com.home.Diary.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.com.home.NodeSync;
 
@@ -60,6 +59,18 @@ public class Record implements NodeSync{
 	public Record clone() {
 		return new Record(date, title, lastUpdate, description, content);
 	}
+	
+	public List<String> getFields() {
+		List<String> fields = new ArrayList<String>();
+		
+		fields.add(date.toString());
+		fields.add(title);
+		fields.add(lastUpdate.toString());
+		fields.add(description);
+		fields.add(content);
+		
+		return fields;
+	}
 
 	@Override
 	public List<String> getIds() {
@@ -72,9 +83,9 @@ public class Record implements NodeSync{
 	}
 
 	@Override
-	public SortedMap<String, String> getMapElements() {
-		SortedMap<String, String> elements = new TreeMap<>();
-		
+	public HashMap<String, String> getMapElements() {
+		HashMap<String, String> elements = new LinkedHashMap<>();
+				
 		elements.put("date", date.toString());
 		elements.put("title", title);
 		elements.put("lastUpdate", lastUpdate.toString());

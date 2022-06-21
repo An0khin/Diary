@@ -10,10 +10,12 @@ import org.com.home.XMLManager;
 
 import com.home.Diary.model.Record;
 import com.home.Diary.model.RecordList;
+import com.home.JDBCManager.JDBCManager;
 
 public class Diary extends Observable {
 	RecordList records;
 	XMLManager xmlManager;
+	JDBCManager jdbcManager;
 	
 	public Diary() {
 		File filePath = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Diary");
@@ -26,9 +28,11 @@ public class Diary extends Observable {
 		
 		xmlManager = new XMLManager(filePath);
 		xmlManager.buildElement("Records");
+		
+		jdbcManager = new JDBCManager("root", "1234", "jdbc:mysql://localhost:3306/diary_base");
 	}
 	
-	public void change() {		
+	public void change() {	
 		setChanged();
 		notifyObservers();
 	}
@@ -45,6 +49,7 @@ public class Diary extends Observable {
 	public void addRecord(Record rec) {
 		records.addRecord(rec);
 		xmlManager.addNode(rec.clone(), "Record", "Records");
+		jdbcManager.insertRowToTable(rec.getFields(), "records");
 		change();
 	}
 	
