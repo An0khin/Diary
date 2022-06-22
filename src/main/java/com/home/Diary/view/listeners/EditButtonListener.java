@@ -19,7 +19,6 @@ import javax.swing.SpinnerModel;
 import javax.swing.JSpinner.DefaultEditor;
 
 import com.home.Diary.model.Record;
-import com.home.Diary.view.DiaryWindow;
 import com.home.Diary.viewmodel.Diary;
 
 public class EditButtonListener implements ActionListener {

@@ -16,7 +16,6 @@ import com.home.Diary.view.listeners.OpenButtonListener;
 import com.home.Diary.viewmodel.Diary;
 
 import javax.swing.*;
-import javax.swing.JSpinner.DefaultEditor;
 /*
  * Created by JFormDesigner on Mon Jun 13 23:55:52 YEKT 2022
  */
@@ -66,8 +65,6 @@ public class DiaryWindow extends JFrame implements Observer{
 		
 		tableModel.setRowCount(0);
 		
-		recordsTable.updateUI();
-
 		for(Record rec : diary.getList()) {
 			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
 		}

@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

@@ -1,6 +1,10 @@
 package com.home.Diary.viewmodel;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +31,11 @@ public class Diary extends Observable {
 		filePath = new File(filePath.getPath() + File.separator + "data.xml");
 		
 		xmlManager = new XMLManager(filePath);
-		xmlManager.buildElement("Records");
+		
+		if(!filePath.exists()) {
+			xmlManager.createXML("DataBase");
+			xmlManager.buildElement("Records");
+		}
 		
 		jdbcManager = new JDBCManager("root", "1234", "jdbc:mysql://localhost:3306/diary_base");
 	}
@@ -39,7 +47,30 @@ public class Diary extends Observable {
 	
 	public void setModel(RecordList records) {
 		this.records = records;
+		updateListFromXML(); //adding records from XML to List
 		change();
+	}
+	
+	private void updateListFromXML() {
+		List<String[]> recordsList = xmlManager.getListOf("Records", "Record", Record.getNull());
+		jdbcManager.clearTable("records");
+		
+		for(String[] array : recordsList) {
+			Record rec = new Record(stringToDate(array[0]), array[1], stringToDate(array[2]), array[3], array[4]);
+			records.addRecord(rec);
+			jdbcManager.insertRowToTable(rec.getFields(), "records");
+		}
+	}
+	
+	private Date stringToDate(String dateString) {
+		SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+		try {
+			return new Date(format.parse(dateString).getTime());
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		
 	}
 	
 	public List<Record> getList() {
@@ -54,7 +85,9 @@ public class Diary extends Observable {
 	}
 	
 	public void editRecord(Record rec, Date date, String title, Date lastUpd, String descr, String content) {
-		xmlManager.editNode(rec.clone(), new Record(date, title, lastUpd, descr, content), "Record", "Records");
+		Record newRecord = new Record(date, title, lastUpd, descr, content);
+		xmlManager.editNode(rec.clone(), newRecord.clone(), "Record", "Records");
+		jdbcManager.editRowFromTable(rec.clone().getFields(), newRecord.clone().getFields(), "records");
 		
 		rec.setDate(date);
 		rec.setTitle(title);
@@ -67,6 +100,7 @@ public class Diary extends Observable {
 	
 	public void deleteRecord(Record rec) {
 		xmlManager.removeNode(rec.clone(), "Record", "Records");
+		jdbcManager.deleteRowFromTable(rec.getFields(), "records");
 		records.delete(rec);
 		
 		change();

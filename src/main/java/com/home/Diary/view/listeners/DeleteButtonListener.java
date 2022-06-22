@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import com.home.Diary.model.Record;
-import com.home.Diary.view.DiaryWindow;
 import com.home.Diary.viewmodel.Diary;
 
 public class DeleteButtonListener implements ActionListener {

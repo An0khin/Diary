@@ -71,6 +71,10 @@ public class Record implements NodeSync{
 		
 		return fields;
 	}
+	
+	public static Record getNull() {
+		return new Record(null, null, null, null, null);
+	}
 
 	@Override
 	public List<String> getIds() {
@@ -95,4 +99,16 @@ public class Record implements NodeSync{
 		return elements;
 	}
 	
+	@Override
+	public List<String> getKeys() {
+		List<String> fields = new ArrayList<String>();
+		
+		fields.add("date");
+		fields.add("title");
+		fields.add("lastUpdate");
+		fields.add("description");
+		fields.add("content");
+		
+		return fields;
+	}
 }
