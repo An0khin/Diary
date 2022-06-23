@@ -57,7 +57,7 @@ public class OpenButtonListener implements ActionListener {
 			};
 			
 			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
-			JDialog dialog = pane.createDialog("HOP");
+			JDialog dialog = pane.createDialog("INFO");
 			
 			pane.remove(pane.getComponents().length - 1);
 			dialog.setVisible(true);

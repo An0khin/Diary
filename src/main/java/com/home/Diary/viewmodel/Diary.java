@@ -21,7 +21,24 @@ public class Diary extends Observable {
 	XMLManager xmlManager;
 	JDBCManager jdbcManager;
 	
+	DiarySettings diarySettings;
+	boolean useMySql;
+	
 	public Diary() {
+		diarySettings = new DiarySettings();
+		useMySql = diarySettings.getUseMySql();
+		
+		setXML();
+		if(useMySql)
+			setMySql();
+		
+	}
+	
+	public void setMySql() {
+		jdbcManager = new JDBCManager("root", "1234", "jdbc:mysql://localhost:3306/diary_base");
+	}
+	
+	public void setXML() {
 		File filePath = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Diary");
 		filePath.mkdir();
 		try {
@@ -36,8 +53,6 @@ public class Diary extends Observable {
 			xmlManager.createXML("DataBase");
 			xmlManager.buildElement("Records");
 		}
-		
-		jdbcManager = new JDBCManager("root", "1234", "jdbc:mysql://localhost:3306/diary_base");
 	}
 	
 	public void change() {	
@@ -47,17 +62,25 @@ public class Diary extends Observable {
 	
 	public void setModel(RecordList records) {
 		this.records = records;
-		updateListFromXML(); //adding records from XML to List
+		updateListFromXML(); 
+		if(useMySql)
+			updateMySqlFromList();
 		change();
 	}
 	
-	private void updateListFromXML() {
+	private void updateListFromXML() { //adding records from XML to List
 		List<String[]> recordsList = xmlManager.getListOf("Records", "Record", Record.getNull());
-		jdbcManager.clearTable("records");
 		
 		for(String[] array : recordsList) {
 			Record rec = new Record(stringToDate(array[0]), array[1], stringToDate(array[2]), array[3], array[4]);
 			records.addRecord(rec);
+		}
+	}
+	
+	private void updateMySqlFromList() {
+		jdbcManager.clearTable("records");
+		
+		for(Record rec : records.getList()) {
 			jdbcManager.insertRowToTable(rec.getFields(), "records");
 		}
 	}
@@ -80,14 +103,16 @@ public class Diary extends Observable {
 	public void addRecord(Record rec) {
 		records.addRecord(rec);
 		xmlManager.addNode(rec.clone(), "Record", "Records");
-		jdbcManager.insertRowToTable(rec.getFields(), "records");
+		if(useMySql)
+			jdbcManager.insertRowToTable(rec.getFields(), "records");
 		change();
 	}
 	
 	public void editRecord(Record rec, Date date, String title, Date lastUpd, String descr, String content) {
 		Record newRecord = new Record(date, title, lastUpd, descr, content);
 		xmlManager.editNode(rec.clone(), newRecord.clone(), "Record", "Records");
-		jdbcManager.editRowFromTable(rec.clone().getFields(), newRecord.clone().getFields(), "records");
+		if(useMySql)
+			jdbcManager.editRowFromTable(rec.clone().getFields(), newRecord.clone().getFields(), "records");
 		
 		rec.setDate(date);
 		rec.setTitle(title);
@@ -100,7 +125,8 @@ public class Diary extends Observable {
 	
 	public void deleteRecord(Record rec) {
 		xmlManager.removeNode(rec.clone(), "Record", "Records");
-		jdbcManager.deleteRowFromTable(rec.getFields(), "records");
+		if(useMySql)
+			jdbcManager.deleteRowFromTable(rec.getFields(), "records");
 		records.delete(rec);
 		
 		change();
@@ -108,5 +134,13 @@ public class Diary extends Observable {
 	
 	public Record getRecordByDate(Date date) {
 		return records.getRecordByDate(date);
+	}
+	
+	//COMMANDS OF SETTINGS
+	public void executeUseMySql() {
+		diarySettings.executeUseMySql();
+		useMySql = diarySettings.getUseMySql();
+		setMySql();
+		updateMySqlFromList();
 	}
 }

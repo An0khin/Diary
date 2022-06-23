@@ -48,6 +48,10 @@ new FormModel {
 						name: "menuFileItemSave"
 						"text": "Save"
 					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuFileItemSettings"
+						"text": "Settings"
+					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 					name: "menuEdit"

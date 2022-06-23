@@ -13,6 +13,7 @@ import com.home.Diary.view.listeners.DeleteButtonListener;
 import com.home.Diary.view.listeners.EditButtonListener;
 import com.home.Diary.view.listeners.NewButtonListener;
 import com.home.Diary.view.listeners.OpenButtonListener;
+import com.home.Diary.view.listeners.SettingButtonListener;
 import com.home.Diary.viewmodel.Diary;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	private NewButtonListener newButtonListener;
 	private EditButtonListener editButtonListener;
 	private DeleteButtonListener deleteButtonListener;
+	private SettingButtonListener settingButtonListener;
 	private Record currentRecord;
 	
 	public DiaryWindow(Diary diary) {
@@ -45,6 +47,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		newButtonListener = new NewButtonListener(diary);
 		editButtonListener = new EditButtonListener(diary);
 		deleteButtonListener = new DeleteButtonListener(diary);
+		settingButtonListener = new SettingButtonListener(diary);
 		
 		initComponents();
 	}
@@ -197,6 +200,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuBar1 = new JMenuBar();
 		menuFile = new JMenu();
 		menuFileItemSave = new JMenuItem();
+		menuFileItemSettings = new JMenuItem();
 		menuEdit = new JMenu();
 		menuEditNew = new JMenuItem();
 		menuEditEdit = new JMenuItem();
@@ -228,6 +232,10 @@ public class DiaryWindow extends JFrame implements Observer{
 					//---- menuFileItemSave ----
 					menuFileItemSave.setText("Save");
 					menuFile.add(menuFileItemSave);
+
+					//---- menuFileItemSettings ----
+					menuFileItemSettings.setText("Settings");
+					menuFile.add(menuFileItemSettings);
 				}
 				menuBar1.add(menuFile);
 
@@ -314,6 +322,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuEditEdit.addActionListener(editButtonListener);
 		menuEditDelete.addActionListener(deleteButtonListener);
 		recordsTable.addMouseListener(new TableSelectionListener());
+		menuFileItemSettings.addActionListener(settingButtonListener);
 		
 	}
 
@@ -322,6 +331,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	private JMenuBar menuBar1;
 	private JMenu menuFile;
 	private JMenuItem menuFileItemSave;
+	private JMenuItem menuFileItemSettings;
 	private JMenu menuEdit;
 	private JMenuItem menuEditNew;
 	private JMenuItem menuEditEdit;
