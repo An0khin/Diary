@@ -1,9 +1,13 @@
 package com.home.Diary.view;
 
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
@@ -36,6 +40,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	private DeleteButtonListener deleteButtonListener;
 	private SettingButtonListener settingButtonListener;
 	private Record currentRecord;
+	private Popup popupFrame;
 	
 	public DiaryWindow(Diary diary) {
 		this.diary = diary;
@@ -43,13 +48,38 @@ public class DiaryWindow extends JFrame implements Observer{
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+		createListeners();
+		
+		createPopup();
+		
+		initComponents();
+	}
+	
+	public void createPopup() {
+		List<JButton> components = new ArrayList<>();
+		
+		JButton openButton = new JButton("OPEN");
+		openButton.addActionListener(openButtonListener);
+		
+		JButton editButton = new JButton("EDIT");
+		editButton.addActionListener(editButtonListener);
+		
+		JButton deleteButton = new JButton("DELETE");
+		deleteButton.addActionListener(deleteButtonListener);
+		
+		components.add(openButton);
+		components.add(editButton);
+		components.add(deleteButton);
+		
+		popupFrame = new Popup(components);
+	}
+	
+	public void createListeners() {
 		openButtonListener = new OpenButtonListener(diary);
 		newButtonListener = new NewButtonListener(diary);
 		editButtonListener = new EditButtonListener(diary);
 		deleteButtonListener = new DeleteButtonListener(diary);
 		settingButtonListener = new SettingButtonListener(diary);
-		
-		initComponents();
 	}
 	
 	public void updateListeners() {
@@ -80,7 +110,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		
 	}
 	
-	public void viewRecord(Record record) {
+	public void viewRecord(Record record) { //Right panel with info about record
 		panelInfo.removeAll();
 		panelInfo.updateUI();
 		
@@ -120,7 +150,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		
 	}
 		
-	public void openChoiceRecord(Record record) {
+	public void openChoiceRecord(Record record) { //Frame with info about record
 		if(record != null) {
 			JPanel upperPanel = new JPanel(new BorderLayout());
 			
@@ -178,9 +208,12 @@ public class DiaryWindow extends JFrame implements Observer{
 		public void mouseClicked(MouseEvent e) {
 			super.mouseClicked(e);
 			
-			if(e.getClickCount() >= 2) {
-				openChoiceRecord(currentRecord);
-			}
+//			popupFrame.setVisible(false);
+			
+			JTable table = (JTable)(e.getSource());
+			Point p = e.getPoint();
+			int row = table.rowAtPoint(p);
+			table.setRowSelectionInterval(row, row);
 			
 			int index = recordsTable.getSelectedRow();
 			
@@ -190,10 +223,22 @@ public class DiaryWindow extends JFrame implements Observer{
 				viewRecord(currentRecord);
 				
 				updateListeners();
-			}			
+			}
+			
+			if(e.getButton() == MouseEvent.BUTTON3) {
+				Point mousePos = e.getLocationOnScreen();
+				mousePos.move((int) mousePos.getX() - 5, (int) mousePos.getY() - 5);
+				popupFrame.setLocation(mousePos);
+				popupFrame.setVisible(true);
+			} else if(e.getButton() == MouseEvent.BUTTON1) {
+				if(e.getClickCount() >= 2) {
+					openChoiceRecord(currentRecord);
+				}
+			}
 		}
 	}
 
+	
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		diaryWindow = new JFrame();
@@ -315,15 +360,15 @@ public class DiaryWindow extends JFrame implements Observer{
 				return false;
 			}
 		};
-		
+				
 		recordsTable.setModel(tableModel);
+		recordsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		buttonNew.addActionListener(newButtonListener);
 		menuEditNew.addActionListener(newButtonListener);
 		menuEditEdit.addActionListener(editButtonListener);
 		menuEditDelete.addActionListener(deleteButtonListener);
 		recordsTable.addMouseListener(new TableSelectionListener());
 		menuFileItemSettings.addActionListener(settingButtonListener);
-		
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables

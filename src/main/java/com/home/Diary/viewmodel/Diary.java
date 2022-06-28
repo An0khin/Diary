@@ -119,7 +119,7 @@ public class Diary extends Observable {
 		rec.setLastUpdate(lastUpd);
 		rec.setDescription(descr);
 		rec.setContent(content);
-				
+	
 		change();
 	}
 	
