@@ -49,6 +49,10 @@ new FormModel {
 						"text": "Save"
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuFileItemLoad"
+						"text": "Load"
+					} )
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuFileItemSettings"
 						"text": "Settings"
 					} )

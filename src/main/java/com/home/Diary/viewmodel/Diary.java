@@ -1,11 +1,7 @@
 package com.home.Diary.viewmodel;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -68,7 +64,7 @@ public class Diary extends Observable {
 		change();
 	}
 	
-	private void updateListFromXML() { //adding records from XML to List
+	public void updateListFromXML() { //adding records from XML to List
 		List<String[]> recordsList = xmlManager.getListOf("Records", "Record", Record.getNull());
 		
 		for(String[] array : recordsList) {
@@ -77,7 +73,7 @@ public class Diary extends Observable {
 		}
 	}
 	
-	private void updateMySqlFromList() {
+	public void updateMySqlFromList() {
 		jdbcManager.clearTable("records");
 		
 		for(Record rec : records.getList()) {
@@ -142,5 +138,19 @@ public class Diary extends Observable {
 		useMySql = diarySettings.getUseMySql();
 		setMySql();
 		updateMySqlFromList();
+	}
+	
+	//Save and Load XML
+	public void saveXml(File toPath) {
+		xmlManager.saveXML(toPath);
+	}
+	
+	public void loadXml(File fromPath) {
+		xmlManager.loadXML(fromPath);
+		
+		updateListFromXML();
+		if(useMySql)
+			updateMySqlFromList();
+		change();
 	}
 }

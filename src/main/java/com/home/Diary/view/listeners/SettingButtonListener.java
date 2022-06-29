@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -27,7 +26,7 @@ public class SettingButtonListener implements ActionListener {
 		JPanel mySqlSetting = new JPanel(new BorderLayout());
 		JLabel mySqlText = new JLabel("Use MySQL");
 		JButton mySqlButton = new JButton("OFF");
-		boolean mySqlOption = false;
+		
 		mySqlButton.addActionListener((ev) -> {
 			diary.executeUseMySql();
 			if(mySqlButton.getText().equals("OFF"))
@@ -35,6 +34,7 @@ public class SettingButtonListener implements ActionListener {
 			else
 				mySqlButton.setText("OFF");
 		});
+		
 		mySqlSetting.add(mySqlText, BorderLayout.WEST);
 		mySqlSetting.add(mySqlButton, BorderLayout.EAST);
 		

@@ -15,8 +15,10 @@ import javax.swing.text.JTextComponent;
 import com.home.Diary.model.Record;
 import com.home.Diary.view.listeners.DeleteButtonListener;
 import com.home.Diary.view.listeners.EditButtonListener;
+import com.home.Diary.view.listeners.LoadButtonListener;
 import com.home.Diary.view.listeners.NewButtonListener;
 import com.home.Diary.view.listeners.OpenButtonListener;
+import com.home.Diary.view.listeners.SaveButtonListener;
 import com.home.Diary.view.listeners.SettingButtonListener;
 import com.home.Diary.viewmodel.Diary;
 
@@ -39,6 +41,8 @@ public class DiaryWindow extends JFrame implements Observer{
 	private EditButtonListener editButtonListener;
 	private DeleteButtonListener deleteButtonListener;
 	private SettingButtonListener settingButtonListener;
+	private SaveButtonListener saveButtonListener;
+	private LoadButtonListener loadButtonListener;
 	private Record currentRecord;
 	private Popup popupFrame;
 	
@@ -80,6 +84,8 @@ public class DiaryWindow extends JFrame implements Observer{
 		editButtonListener = new EditButtonListener(diary);
 		deleteButtonListener = new DeleteButtonListener(diary);
 		settingButtonListener = new SettingButtonListener(diary);
+		saveButtonListener = new SaveButtonListener(diary);
+		loadButtonListener = new LoadButtonListener(diary);
 	}
 	
 	public void updateListeners() {
@@ -245,6 +251,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuBar1 = new JMenuBar();
 		menuFile = new JMenu();
 		menuFileItemSave = new JMenuItem();
+		menuFileItemLoad = new JMenuItem();
 		menuFileItemSettings = new JMenuItem();
 		menuEdit = new JMenu();
 		menuEditNew = new JMenuItem();
@@ -277,6 +284,10 @@ public class DiaryWindow extends JFrame implements Observer{
 					//---- menuFileItemSave ----
 					menuFileItemSave.setText("Save");
 					menuFile.add(menuFileItemSave);
+
+					//---- menuFileItemLoad ----
+					menuFileItemLoad.setText("Load");
+					menuFile.add(menuFileItemLoad);
 
 					//---- menuFileItemSettings ----
 					menuFileItemSettings.setText("Settings");
@@ -369,6 +380,8 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuEditDelete.addActionListener(deleteButtonListener);
 		recordsTable.addMouseListener(new TableSelectionListener());
 		menuFileItemSettings.addActionListener(settingButtonListener);
+		menuFileItemSave.addActionListener(saveButtonListener);
+		menuFileItemLoad.addActionListener(loadButtonListener);
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
@@ -376,6 +389,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	private JMenuBar menuBar1;
 	private JMenu menuFile;
 	private JMenuItem menuFileItemSave;
+	private JMenuItem menuFileItemLoad;
 	private JMenuItem menuFileItemSettings;
 	private JMenu menuEdit;
 	private JMenuItem menuEditNew;
