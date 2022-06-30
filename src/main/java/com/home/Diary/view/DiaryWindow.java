@@ -1,11 +1,10 @@
 package com.home.Diary.view;
 
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
@@ -243,7 +242,49 @@ public class DiaryWindow extends JFrame implements Observer{
 			}
 		}
 	}
-
+	
+	private class FindButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JLabel labelDate = new JLabel("Enter date/title/description");
+			JTextField searchFieldDate = new JTextField();
+			JLabel labelTitle = new JLabel("Enter title");
+			JTextField searchFieldTitle = new JTextField();
+			JLabel labelDesc = new JLabel("Enter description");
+			JTextField searchFieldDescription = new JTextField();
+			
+			Object[] message = {
+					labelDate,
+					searchFieldDate,
+					labelTitle,
+					searchFieldTitle,
+					labelDesc,
+					searchFieldDescription
+			};
+			
+			int option = JOptionPane.showConfirmDialog(null, message, "Search", JOptionPane.OK_CANCEL_OPTION);
+			
+			recordsTable.clearSelection();
+			
+			if(option == JOptionPane.OK_OPTION) {
+				Record[] records = diary.findRecords(searchFieldDate.getText(), searchFieldTitle.getText(), searchFieldDescription.getText());
+				
+				int size = tableModel.getRowCount();
+				Record currentRecord;
+				
+				for(int i = 0; i < size; i++) {
+					currentRecord = diary.getRecordByDate((Date) tableModel.getValueAt(i, 0));
+					
+					for(int j = 0; j < records.length; j++) {
+						if(currentRecord.equals(records[j])) {
+							recordsTable.addRowSelectionInterval(i, i);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 	
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -254,10 +295,11 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuFileItemLoad = new JMenuItem();
 		menuFileItemSettings = new JMenuItem();
 		menuEdit = new JMenu();
-		menuEditNew = new JMenuItem();
-		menuEditEdit = new JMenuItem();
-		menuEditDelete = new JMenuItem();
+		menuEditItemNew = new JMenuItem();
+		menuEditItemEdit = new JMenuItem();
+		menuEditItemDelete = new JMenuItem();
 		menuFind = new JMenu();
+		menuFindItemFind = new JMenuItem();
 		menuView = new JMenu();
 		mainPanel = new JPanel();
 		panelRecords = new JPanel();
@@ -299,23 +341,27 @@ public class DiaryWindow extends JFrame implements Observer{
 				{
 					menuEdit.setText("Edit");
 
-					//---- menuEditNew ----
-					menuEditNew.setText("New");
-					menuEdit.add(menuEditNew);
+					//---- menuEditItemNew ----
+					menuEditItemNew.setText("New");
+					menuEdit.add(menuEditItemNew);
 
-					//---- menuEditEdit ----
-					menuEditEdit.setText("Edit");
-					menuEdit.add(menuEditEdit);
+					//---- menuEditItemEdit ----
+					menuEditItemEdit.setText("Edit");
+					menuEdit.add(menuEditItemEdit);
 
-					//---- menuEditDelete ----
-					menuEditDelete.setText("Delete");
-					menuEdit.add(menuEditDelete);
+					//---- menuEditItemDelete ----
+					menuEditItemDelete.setText("Delete");
+					menuEdit.add(menuEditItemDelete);
 				}
 				menuBar1.add(menuEdit);
 
 				//======== menuFind ========
 				{
 					menuFind.setText("Find");
+
+					//---- menuFindItemFind ----
+					menuFindItemFind.setText("Find...");
+					menuFind.add(menuFindItemFind);
 				}
 				menuBar1.add(menuFind);
 
@@ -337,9 +383,6 @@ public class DiaryWindow extends JFrame implements Observer{
 
 					//======== scrollPaneRecordsTable ========
 					{
-
-						//---- recordsTable ----
-						recordsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 						scrollPaneRecordsTable.setViewportView(recordsTable);
 					}
 					panelRecords.add(scrollPaneRecordsTable);
@@ -373,15 +416,16 @@ public class DiaryWindow extends JFrame implements Observer{
 		};
 				
 		recordsTable.setModel(tableModel);
-		recordsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		buttonNew.addActionListener(newButtonListener);
-		menuEditNew.addActionListener(newButtonListener);
-		menuEditEdit.addActionListener(editButtonListener);
-		menuEditDelete.addActionListener(deleteButtonListener);
+		menuEditItemNew.addActionListener(newButtonListener);
+		menuEditItemEdit.addActionListener(editButtonListener);
+		menuEditItemDelete.addActionListener(deleteButtonListener);
 		recordsTable.addMouseListener(new TableSelectionListener());
 		menuFileItemSettings.addActionListener(settingButtonListener);
 		menuFileItemSave.addActionListener(saveButtonListener);
 		menuFileItemLoad.addActionListener(loadButtonListener);
+		menuFindItemFind.addActionListener(new FindButtonListener());
+		
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
@@ -392,10 +436,11 @@ public class DiaryWindow extends JFrame implements Observer{
 	private JMenuItem menuFileItemLoad;
 	private JMenuItem menuFileItemSettings;
 	private JMenu menuEdit;
-	private JMenuItem menuEditNew;
-	private JMenuItem menuEditEdit;
-	private JMenuItem menuEditDelete;
+	private JMenuItem menuEditItemNew;
+	private JMenuItem menuEditItemEdit;
+	private JMenuItem menuEditItemDelete;
 	private JMenu menuFind;
+	private JMenuItem menuFindItemFind;
 	private JMenu menuView;
 	private JPanel mainPanel;
 	private JPanel panelRecords;

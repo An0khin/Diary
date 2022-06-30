@@ -38,4 +38,19 @@ public class RecordList {
 		
 		return null;
 	}
+	
+	public Record[] findRecords(String date, String title, String description) {
+		Record record;
+		List<Record> recordsList = new ArrayList<>();
+		
+		for(int i = 0; i < records.size(); i++) {
+			record = records.get(i);
+			
+			if(record.getDate().toString().contains(date) && record.getTitle().contains(title) && record.getDescription().contains(description)) {
+				recordsList.add(record);
+			}
+		}
+		
+		return recordsList.toArray(new Record[0]);
+	}
 }

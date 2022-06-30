@@ -132,6 +132,10 @@ public class Diary extends Observable {
 		return records.getRecordByDate(date);
 	}
 	
+	public Record[] findRecords(String date, String title, String description) {		
+		return records.findRecords(date, title, description);
+	}
+	
 	//COMMANDS OF SETTINGS
 	public void executeUseMySql() {
 		diarySettings.executeUseMySql();
