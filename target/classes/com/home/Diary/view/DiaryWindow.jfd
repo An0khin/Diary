@@ -20,7 +20,6 @@ new FormModel {
 						name: "scrollPaneRecordsTable"
 						add( new FormComponent( "javax.swing.JTable" ) {
 							name: "recordsTable"
-							"selectionMode": 1
 						} )
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
@@ -61,21 +60,25 @@ new FormModel {
 					name: "menuEdit"
 					"text": "Edit"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuEditNew"
+						name: "menuEditItemNew"
 						"text": "New"
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuEditEdit"
+						name: "menuEditItemEdit"
 						"text": "Edit"
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuEditDelete"
+						name: "menuEditItemDelete"
 						"text": "Delete"
 					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 					name: "menuFind"
 					"text": "Find"
+					add( new FormComponent( "javax.swing.JMenuItem" ) {
+						name: "menuFindItemFind"
+						"text": "Find..."
+					} )
 				} )
 				add( new FormContainer( "javax.swing.JMenu", new FormLayoutManager( class javax.swing.JMenu ) ) {
 					name: "menuView"

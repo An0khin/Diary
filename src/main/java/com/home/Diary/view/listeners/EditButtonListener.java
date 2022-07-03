@@ -51,7 +51,7 @@ public class EditButtonListener implements ActionListener {
 				
 //				JTextField dateLbl = new JTextField(record.getDate().toString());
 				
-			JTextField titleField = new JTextField(record.getTitle(), 40);
+			JTextField titleField = new JTextField(record.getTitle());
 			titleField.setHorizontalAlignment(JTextField.CENTER);
 				
 			JLabel lastUpdateLbl = new JLabel(record.getLastUpdate().toString());
@@ -61,13 +61,13 @@ public class EditButtonListener implements ActionListener {
 			upperPanel.add(lastUpdateLbl, BorderLayout.EAST);
 				
 				
-			JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 10);
+			JTextArea descriptionArea = new JTextArea(record.getDescription());
 			descriptionArea.setLineWrap(true);
 			JScrollPane descriptionPane = new JScrollPane(descriptionArea);
 			descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				
-			JTextArea contentArea = new JTextArea(record.getContent(), 40, 40);
+			JTextArea contentArea = new JTextArea(record.getContent());
 			contentArea.setLineWrap(true);
 			JScrollPane contentPane = new JScrollPane(contentArea);
 			contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

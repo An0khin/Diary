@@ -42,20 +42,20 @@ public class NewButtonListener implements ActionListener {
 	    ((DefaultEditor) editor).getTextField().setEditable(false); //disable editing field of the date by own hands
 	    spinnerForDate.setEditor(editor);
 	    
-		JTextField titleField = new JTextField(40);
+		JTextField titleField = new JTextField();
 		titleField.setHorizontalAlignment(JTextField.CENTER);
 		
 		upperPanel.add(spinnerForDate, BorderLayout.WEST);
 		upperPanel.add(titleField, BorderLayout.CENTER);
 		
 		
-		JTextArea descriptionField = new JTextArea(5, 10);
+		JTextArea descriptionField = new JTextArea();
 		descriptionField.setLineWrap(true);
 		JScrollPane descriptionPane = new JScrollPane(descriptionField);
 		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		JTextArea contentField = new JTextArea(40, 40);
+		JTextArea contentField = new JTextArea();
 		contentField.setLineWrap(true);
 		JScrollPane contentPane = new JScrollPane(contentField);
 		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
