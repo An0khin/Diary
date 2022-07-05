@@ -44,7 +44,7 @@ public class OpenButtonListener implements ActionListener {
 			upperPanel.add(dateField, BorderLayout.WEST);
 			upperPanel.add(titleField, BorderLayout.CENTER);
 			
-			JTextArea contentArea = new JTextArea(record.getContent());
+			JTextArea contentArea = new JTextArea(record.getContent(), 5, 20);
 			contentArea.setLineWrap(true);
 			contentArea.setEditable(false);
 			JScrollPane contentPane = new JScrollPane(contentArea);

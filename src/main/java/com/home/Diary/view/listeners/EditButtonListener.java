@@ -61,13 +61,13 @@ public class EditButtonListener implements ActionListener {
 			upperPanel.add(lastUpdateLbl, BorderLayout.EAST);
 				
 				
-			JTextArea descriptionArea = new JTextArea(record.getDescription());
+			JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 20);
 			descriptionArea.setLineWrap(true);
 			JScrollPane descriptionPane = new JScrollPane(descriptionArea);
 			descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				
-			JTextArea contentArea = new JTextArea(record.getContent());
+			JTextArea contentArea = new JTextArea(record.getContent(), 5, 20);
 			contentArea.setLineWrap(true);
 			JScrollPane contentPane = new JScrollPane(contentArea);
 			contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

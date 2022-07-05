@@ -45,6 +45,12 @@ public class DiaryWindow extends JFrame implements Observer{
 	private Record currentRecord;
 	private Popup popupFrame;
 	
+	//Columns
+	private static final boolean dateCol = true;
+	private boolean titleCol = true;
+	private boolean lastUpdCol = true;
+	private boolean descriptionCol = true;
+	
 	public DiaryWindow(Diary diary) {
 		this.diary = diary;
 		diary.addObserver(this);
@@ -104,7 +110,26 @@ public class DiaryWindow extends JFrame implements Observer{
 		tableModel.setRowCount(0);
 		
 		for(Record rec : diary.getList()) {
-			tableModel.addRow(new Object[] {rec.getDate(), rec.getTitle()});
+			List<Object> row = new ArrayList<>();
+			row.add(rec.getDate());
+			
+			if(titleCol) {
+//				System.out.println("TITLE");
+				row.add(rec.getTitle());
+			}
+			
+			if(lastUpdCol) {
+//				System.out.println("LAST UPDATE");
+				row.add(rec.getLastUpdate());
+			}
+			
+			if(descriptionCol) {
+//				System.out.println("DESCRIPTION");
+				row.add(rec.getDescription());
+			}
+			
+			
+			tableModel.addRow(row.toArray());
 		}
 		
 		panelInfo.removeAll();
@@ -262,7 +287,7 @@ public class DiaryWindow extends JFrame implements Observer{
 					searchFieldDescription
 			};
 			
-			int option = JOptionPane.showConfirmDialog(null, message, "Search", JOptionPane.OK_CANCEL_OPTION);
+			int option = JOptionPane.showConfirmDialog(null, message, "Search", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 			
 			recordsTable.clearSelection();
 			
@@ -286,6 +311,58 @@ public class DiaryWindow extends JFrame implements Observer{
 		}
 	}
 	
+	public class ColumnsButtonListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JCheckBox dateColumn = new JCheckBox("DATE", dateCol);
+			dateColumn.setEnabled(false);
+			JCheckBox titleColumn = new JCheckBox("TITLE", titleCol);
+			JCheckBox lastUpdColumn = new JCheckBox("LAST UPDATE", lastUpdCol);
+			JCheckBox descriptionColumn = new JCheckBox("DESCRIPTION", descriptionCol);		
+			
+			Object[] message = {
+					dateColumn,
+					titleColumn,
+					lastUpdColumn,
+					descriptionColumn
+			};
+			
+			int option = JOptionPane.showConfirmDialog(null, message, "Columns...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+						
+			if(option == JOptionPane.OK_OPTION) {
+				
+				List<String> columns = new ArrayList<>();
+				columns.add("DATE");
+				
+				titleCol = titleColumn.isSelected();
+				lastUpdCol = lastUpdColumn.isSelected();
+				descriptionCol = descriptionColumn.isSelected();
+				
+				if(titleCol) {
+					columns.add("TITLE");
+				}
+				
+				if(lastUpdCol) {
+					columns.add("LAST UPDATE");
+				}
+				
+				if(descriptionCol) {
+					columns.add("DESCRIPTION");
+				}
+				
+				tableModel = new DefaultTableModel(null, columns.toArray(new String[0])) {
+					@Override
+					public boolean isCellEditable(int row, int column) { //using for disable editable rows
+						return false;
+					}
+				};
+				
+				recordsTable.setModel(tableModel);
+				update(null, null);
+			}
+		}
+	}
+	
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		diaryWindow = new JFrame();
@@ -301,6 +378,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuFind = new JMenu();
 		menuFindItemFind = new JMenuItem();
 		menuView = new JMenu();
+		menuViewItemColumns = new JMenuItem();
 		mainPanel = new JPanel();
 		panelRecords = new JPanel();
 		scrollPaneRecordsTable = new JScrollPane();
@@ -368,6 +446,10 @@ public class DiaryWindow extends JFrame implements Observer{
 				//======== menuView ========
 				{
 					menuView.setText("View");
+
+					//---- menuViewItemColumns ----
+					menuViewItemColumns.setText("Columns...");
+					menuView.add(menuViewItemColumns);
 				}
 				menuBar1.add(menuView);
 			}
@@ -408,7 +490,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		}
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 		
-		tableModel = new DefaultTableModel(null, new String[] {"DATE", "TITLE"}) {
+		tableModel = new DefaultTableModel(null, new String[] {"DATE", "TITLE", "LAST UPDATE", "DESCRIPTION"}) {
 			@Override
 			public boolean isCellEditable(int row, int column) { //using for disable editable rows
 				return false;
@@ -425,6 +507,7 @@ public class DiaryWindow extends JFrame implements Observer{
 		menuFileItemSave.addActionListener(saveButtonListener);
 		menuFileItemLoad.addActionListener(loadButtonListener);
 		menuFindItemFind.addActionListener(new FindButtonListener());
+		menuViewItemColumns.addActionListener(new ColumnsButtonListener());
 		
 	}
 
@@ -442,6 +525,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	private JMenu menuFind;
 	private JMenuItem menuFindItemFind;
 	private JMenu menuView;
+	private JMenuItem menuViewItemColumns;
 	private JPanel mainPanel;
 	private JPanel panelRecords;
 	private JScrollPane scrollPaneRecordsTable;

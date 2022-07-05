@@ -49,13 +49,13 @@ public class NewButtonListener implements ActionListener {
 		upperPanel.add(titleField, BorderLayout.CENTER);
 		
 		
-		JTextArea descriptionField = new JTextArea();
+		JTextArea descriptionField = new JTextArea(5, 20);
 		descriptionField.setLineWrap(true);
 		JScrollPane descriptionPane = new JScrollPane(descriptionField);
 		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		JTextArea contentField = new JTextArea();
+		JTextArea contentField = new JTextArea(5, 20);
 		contentField.setLineWrap(true);
 		JScrollPane contentPane = new JScrollPane(contentField);
 		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
