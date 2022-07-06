@@ -21,37 +21,38 @@ public class Diary extends Observable {
 	boolean useMySql;
 	
 	public Diary() {
-		diarySettings = new DiarySettings();
+		File filePath = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Diary");
+		filePath.mkdir();
+		File filePathIni = new File(filePath.getPath() + File.separator + "settings.ini");
+		
+		try {
+			Thread.sleep(1);
+		} catch(Exception e) {e.printStackTrace();}
+		
+		diarySettings = new DiarySettings(filePathIni);
 		useMySql = diarySettings.getUseMySql();
 		
-		setXML();
+		setXML(filePath);
 		if(useMySql)
 			setMySql();
-		
 	}
 	
 	public void setMySql() {
 		jdbcManager = new JDBCManager("root", "1234", "jdbc:mysql://localhost:3306/diary_base");
 	}
 	
-	public void setXML() {
-		File filePath = new File(System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Diary");
-		filePath.mkdir();
-		try {
-			Thread.sleep(1);
-		} catch(Exception e) {e.printStackTrace();}
+	public void setXML(File filePath) {
+		File filePathXml = new File(filePath.getPath() + File.separator + "data.xml");
 		
-		filePath = new File(filePath.getPath() + File.separator + "data.xml");
+		xmlManager = new XMLManager(filePathXml);
 		
-		xmlManager = new XMLManager(filePath);
-		
-		if(!filePath.exists()) {
+		if(!filePathXml.exists()) {
 			xmlManager.createXML("DataBase");
 			xmlManager.buildElement("Records");
 		}
 	}
 	
-	public void change() {	
+	public void change() {
 		setChanged();
 		notifyObservers();
 	}
@@ -156,5 +157,14 @@ public class Diary extends Observable {
 		if(useMySql)
 			updateMySqlFromList();
 		change();
+	}
+	
+	//Work with columns
+	public void setColumns(boolean[] columns) {
+		diarySettings.setColumns(columns);
+	}
+	
+	public boolean[] getColumns() {
+		return diarySettings.getColumns();
 	}
 }

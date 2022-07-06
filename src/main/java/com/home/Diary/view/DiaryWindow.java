@@ -44,13 +44,7 @@ public class DiaryWindow extends JFrame implements Observer{
 	private LoadButtonListener loadButtonListener;
 	private Record currentRecord;
 	private Popup popupFrame;
-	
-	//Columns
-	private static final boolean dateCol = true;
-	private boolean titleCol = true;
-	private boolean lastUpdCol = true;
-	private boolean descriptionCol = true;
-	
+		
 	public DiaryWindow(Diary diary) {
 		this.diary = diary;
 		diary.addObserver(this);
@@ -62,6 +56,8 @@ public class DiaryWindow extends JFrame implements Observer{
 		createPopup();
 		
 		initComponents();
+		
+		createModel(diary.getColumns());
 	}
 	
 	public void createPopup() {
@@ -108,22 +104,25 @@ public class DiaryWindow extends JFrame implements Observer{
 		}
 		
 		tableModel.setRowCount(0);
+
+		//0 - title; 1 - lastUpd; 2 - description
+		boolean[] columns = diary.getColumns();
 		
 		for(Record rec : diary.getList()) {
 			List<Object> row = new ArrayList<>();
 			row.add(rec.getDate());
 			
-			if(titleCol) {
+			if(columns[0]) {
 //				System.out.println("TITLE");
 				row.add(rec.getTitle());
 			}
 			
-			if(lastUpdCol) {
+			if(columns[1]) {
 //				System.out.println("LAST UPDATE");
 				row.add(rec.getLastUpdate());
 			}
 			
-			if(descriptionCol) {
+			if(columns[2]) {
 //				System.out.println("DESCRIPTION");
 				row.add(rec.getDescription());
 			}
@@ -314,11 +313,14 @@ public class DiaryWindow extends JFrame implements Observer{
 	public class ColumnsButtonListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JCheckBox dateColumn = new JCheckBox("DATE", dateCol);
+			JCheckBox dateColumn = new JCheckBox("DATE", true); //Date always true
 			dateColumn.setEnabled(false);
-			JCheckBox titleColumn = new JCheckBox("TITLE", titleCol);
-			JCheckBox lastUpdColumn = new JCheckBox("LAST UPDATE", lastUpdCol);
-			JCheckBox descriptionColumn = new JCheckBox("DESCRIPTION", descriptionCol);		
+			
+			boolean[] columns = diary.getColumns();
+			
+			JCheckBox titleColumn = new JCheckBox("TITLE", columns[0]);
+			JCheckBox lastUpdColumn = new JCheckBox("LAST UPDATE", columns[1]);
+			JCheckBox descriptionColumn = new JCheckBox("DESCRIPTION", columns[2]);		
 			
 			Object[] message = {
 					dateColumn,
@@ -329,38 +331,44 @@ public class DiaryWindow extends JFrame implements Observer{
 			
 			int option = JOptionPane.showConfirmDialog(null, message, "Columns...", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 						
-			if(option == JOptionPane.OK_OPTION) {
+			if(option == JOptionPane.OK_OPTION) {	
 				
-				List<String> columns = new ArrayList<>();
-				columns.add("DATE");
+			columns[0] = titleColumn.isSelected();
+			columns[1] = lastUpdColumn.isSelected();
+			columns[2] = descriptionColumn.isSelected();
 				
-				titleCol = titleColumn.isSelected();
-				lastUpdCol = lastUpdColumn.isSelected();
-				descriptionCol = descriptionColumn.isSelected();
-				
-				if(titleCol) {
-					columns.add("TITLE");
-				}
-				
-				if(lastUpdCol) {
-					columns.add("LAST UPDATE");
-				}
-				
-				if(descriptionCol) {
-					columns.add("DESCRIPTION");
-				}
-				
-				tableModel = new DefaultTableModel(null, columns.toArray(new String[0])) {
-					@Override
-					public boolean isCellEditable(int row, int column) { //using for disable editable rows
-						return false;
-					}
-				};
-				
-				recordsTable.setModel(tableModel);
-				update(null, null);
+				diary.setColumns(columns);
+				createModel(columns);
 			}
 		}
+	}
+	
+	public void createModel(boolean[] columns) {
+		//0 - title; 1 - lastUpd; 2 - description
+		List<String> columnsString = new ArrayList<>();
+		columnsString.add("DATE");
+		
+		if(columns[0]) {
+			columnsString.add("TITLE");
+		}
+		
+		if(columns[1]) {
+			columnsString.add("LAST UPDATE");
+		}
+		
+		if(columns[2]) {
+			columnsString.add("DESCRIPTION");
+		}
+		
+		tableModel = new DefaultTableModel(null, columnsString.toArray(new String[0])) {
+			@Override
+			public boolean isCellEditable(int row, int column) { //using for disable editable rows
+				return false;
+			}
+		};
+		
+		recordsTable.setModel(tableModel);
+		update(null, null);
 	}
 	
 	private void initComponents() {

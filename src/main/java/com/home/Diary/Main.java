@@ -7,8 +7,8 @@ import com.home.Diary.viewmodel.Diary;
 public class Main {
 	public static void main(String[] args) {
 		Diary diary = new Diary();
-		DiaryWindow window = new DiaryWindow(diary);
-		
 		diary.setModel(new RecordList());
+		
+		DiaryWindow window = new DiaryWindow(diary);
 	}
 }
