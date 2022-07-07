@@ -53,4 +53,8 @@ public class RecordList {
 		
 		return recordsList.toArray(new Record[0]);
 	}
+	
+	public void clear() {
+		records.clear();
+	}
 }

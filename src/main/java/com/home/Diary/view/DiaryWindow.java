@@ -58,6 +58,8 @@ public class DiaryWindow extends JFrame implements Observer{
 		initComponents();
 		
 		createModel(diary.getColumns());
+		
+		diary.change();
 	}
 	
 	public void createPopup() {
@@ -107,6 +109,8 @@ public class DiaryWindow extends JFrame implements Observer{
 
 		//0 - title; 1 - lastUpd; 2 - description
 		boolean[] columns = diary.getColumns();
+		
+		createModel(columns);
 		
 		for(Record rec : diary.getList()) {
 			List<Object> row = new ArrayList<>();
@@ -339,6 +343,7 @@ public class DiaryWindow extends JFrame implements Observer{
 				
 				diary.setColumns(columns);
 				createModel(columns);
+				update(null, null);
 			}
 		}
 	}
@@ -368,7 +373,6 @@ public class DiaryWindow extends JFrame implements Observer{
 		};
 		
 		recordsTable.setModel(tableModel);
-		update(null, null);
 	}
 	
 	private void initComponents() {

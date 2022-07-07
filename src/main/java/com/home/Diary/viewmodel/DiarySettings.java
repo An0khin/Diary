@@ -19,18 +19,19 @@ public class DiarySettings {
 		this.fileIni = fileIni;
 		
 		if(fileIni.exists()) {
+			
 			load();
+			
 		} else {
-			useMySql = false;
-			titleCol = true;
-			lastUpdCol = true;
-			descriptionCol = true;
+						
 			try {
 				fileIni.createNewFile();
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
-			save();
+			
+			reset();
+			
 		}
 	}
 	
@@ -45,6 +46,7 @@ public class DiarySettings {
 		titleCol = columns[0];
 		lastUpdCol = columns[1];
 		descriptionCol = columns[2];
+		
 		save();
 	}
 	
@@ -63,6 +65,7 @@ public class DiarySettings {
 		return columns;
 	}
 	
+	//Load and save settings
 	public void load() {
 		Properties prop = new Properties();
 		try {
@@ -76,12 +79,7 @@ public class DiarySettings {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			
-			useMySql = false;
-			titleCol = true;
-			lastUpdCol = true;
-			descriptionCol = true;
-			
-			save();
+			reset();
 		}
 	}
 	
@@ -98,5 +96,15 @@ public class DiarySettings {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	//Reset
+	public void reset() {
+		useMySql = false;
+		titleCol = true;
+		lastUpdCol = true;
+		descriptionCol = true;
+		
+		save();
 	}
  }

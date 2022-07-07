@@ -27,6 +27,8 @@ public class SettingButtonListener implements ActionListener {
 		JLabel mySqlText = new JLabel("Use MySQL");
 		JButton mySqlButton = new JButton("OFF");
 		
+		JButton resetDataButton = new JButton("RESET ALL DATA");
+		
 		mySqlButton.addActionListener((ev) -> {
 			diary.executeUseMySql();
 			if(mySqlButton.getText().equals("OFF"))
@@ -35,11 +37,16 @@ public class SettingButtonListener implements ActionListener {
 				mySqlButton.setText("OFF");
 		});
 		
+		resetDataButton.addActionListener((ev) -> {
+			diary.resetAllData();
+		});
+		
 		mySqlSetting.add(mySqlText, BorderLayout.WEST);
 		mySqlSetting.add(mySqlButton, BorderLayout.EAST);
 		
 		Object[] message = {
-				mySqlSetting
+				mySqlSetting,
+				resetDataButton
 		};
 		
 		JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);

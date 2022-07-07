@@ -62,7 +62,6 @@ public class Diary extends Observable {
 		updateListFromXML(); 
 		if(useMySql)
 			updateMySqlFromList();
-		change();
 	}
 	
 	public void updateListFromXML() { //adding records from XML to List
@@ -90,7 +89,6 @@ public class Diary extends Observable {
 			ex.printStackTrace();
 			return null;
 		}
-		
 	}
 	
 	public List<Record> getList() {
@@ -166,5 +164,14 @@ public class Diary extends Observable {
 	
 	public boolean[] getColumns() {
 		return diarySettings.getColumns();
+	}
+	
+	//Reset
+	public void resetAllData() {
+		diarySettings.reset();
+		xmlManager.clear("Records");
+		records.clear();
+		
+		change();
 	}
 }
