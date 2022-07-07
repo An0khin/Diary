@@ -1,6 +1,8 @@
 package com.home.Diary.view.listeners;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -30,6 +32,11 @@ public class NewButtonListener implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		
+		int widthFields = gd.getDisplayMode().getWidth() / 15;
+		int heightFields = gd.getDisplayMode().getHeight() / 60;
+		
 		Date date = Calendar.getInstance().getTime();
 		
 		JPanel upperPanel = new JPanel(new BorderLayout());
@@ -49,13 +56,13 @@ public class NewButtonListener implements ActionListener {
 		upperPanel.add(titleField, BorderLayout.CENTER);
 		
 		
-		JTextArea descriptionField = new JTextArea(5, 20);
+		JTextArea descriptionField = new JTextArea(heightFields, widthFields);
 		descriptionField.setLineWrap(true);
 		JScrollPane descriptionPane = new JScrollPane(descriptionField);
 		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
-		JTextArea contentField = new JTextArea(5, 20);
+		JTextArea contentField = new JTextArea((int) (heightFields * 1.5), widthFields);
 		contentField.setLineWrap(true);
 		JScrollPane contentPane = new JScrollPane(contentField);
 		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

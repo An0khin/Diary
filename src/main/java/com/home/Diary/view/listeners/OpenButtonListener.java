@@ -1,6 +1,8 @@
 package com.home.Diary.view.listeners;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -32,6 +34,11 @@ public class OpenButtonListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(record != null) {
+			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+			
+			int widthFields = gd.getDisplayMode().getWidth() / 15;
+			int heightFields = gd.getDisplayMode().getHeight() / 20;
+			
 			JPanel upperPanel = new JPanel(new BorderLayout());
 			
 			JTextField dateField = new JTextField(record.getDate().toString());
@@ -44,7 +51,7 @@ public class OpenButtonListener implements ActionListener {
 			upperPanel.add(dateField, BorderLayout.WEST);
 			upperPanel.add(titleField, BorderLayout.CENTER);
 			
-			JTextArea contentArea = new JTextArea(record.getContent(), 5, 20);
+			JTextArea contentArea = new JTextArea(record.getContent(), heightFields, widthFields);
 			contentArea.setLineWrap(true);
 			contentArea.setEditable(false);
 			JScrollPane contentPane = new JScrollPane(contentArea);
@@ -57,7 +64,7 @@ public class OpenButtonListener implements ActionListener {
 			};
 			
 			JOptionPane pane = new JOptionPane(message, JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
-			JDialog dialog = pane.createDialog("INFO");
+			JDialog dialog = pane.createDialog("Reading record");
 			
 			pane.remove(pane.getComponents().length - 1);
 			dialog.setVisible(true);

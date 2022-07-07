@@ -1,6 +1,8 @@
 package com.home.Diary.view.listeners;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
@@ -38,6 +40,11 @@ public class EditButtonListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(record != null) {
+			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+			
+			int widthFields = gd.getDisplayMode().getWidth() / 15;
+			int heightFields = gd.getDisplayMode().getHeight() / 60;
+			
 			JPanel upperPanel = new JPanel(new BorderLayout());
 				
 			SpinnerModel modelCurDate = new SpinnerDateModel();
@@ -59,15 +66,14 @@ public class EditButtonListener implements ActionListener {
 			upperPanel.add(spinnerForDate, BorderLayout.WEST);
 			upperPanel.add(titleField, BorderLayout.CENTER);
 			upperPanel.add(lastUpdateLbl, BorderLayout.EAST);
-				
-				
-			JTextArea descriptionArea = new JTextArea(record.getDescription(), 5, 20);
+			
+			JTextArea descriptionArea = new JTextArea(record.getDescription(), heightFields, widthFields);
 			descriptionArea.setLineWrap(true);
 			JScrollPane descriptionPane = new JScrollPane(descriptionArea);
 			descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				
-			JTextArea contentArea = new JTextArea(record.getContent(), 5, 20);
+			JTextArea contentArea = new JTextArea(record.getContent(), (int) (heightFields * 1.5), widthFields);
 			contentArea.setLineWrap(true);
 			JScrollPane contentPane = new JScrollPane(contentArea);
 			contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -79,7 +85,7 @@ public class EditButtonListener implements ActionListener {
 					"Content", contentPane
 			};
 				
-			int option = JOptionPane.showConfirmDialog(null, message, "New record", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
+			int option = JOptionPane.showConfirmDialog(null, message, "Edit record", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
 				
 			if(option == JOptionPane.OK_OPTION) {
 				int optionSave = JOptionPane.showConfirmDialog(null, "Do you want to save the changes?", "Save?", JOptionPane.YES_NO_OPTION);
