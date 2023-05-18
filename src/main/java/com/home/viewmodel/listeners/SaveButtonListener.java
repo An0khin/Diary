@@ -18,7 +18,6 @@ public class SaveButtonListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		JFileChooser fc = new JFileChooser();
 		
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
