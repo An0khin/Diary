@@ -27,18 +27,6 @@ public class Record implements Nodeable {
         return new Record(null, null, null, null, null);
     }
 
-    public List<String> getFields() {
-        List<String> fields = new ArrayList<String>();
-
-        fields.add(date.toString());
-        fields.add(title);
-        fields.add(lastUpdate.toString());
-        fields.add(description);
-        fields.add(content);
-
-        return fields;
-    }
-
     @Override
     public Map<String, String> getValues() {
         Map<String, String> elements = new LinkedHashMap<>();
