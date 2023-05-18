@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class OpenButtonListener implements ActionListener, ListenerWithRecord {
+public class OpenButtonListener implements ActionListener {
 	
 	Diary diary;
 	Record record;
@@ -17,8 +17,6 @@ public class OpenButtonListener implements ActionListener, ListenerWithRecord {
 		super();
 		this.diary = diary;
 	}
-
-	@Override
 	public void updateCurrentRecord(Record record) {
 		this.record = record;
 	}
