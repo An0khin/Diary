@@ -71,9 +71,10 @@ public class NewButtonListener implements ActionListener {
 	}
 	private JSpinner setupDateSpinner() {
 		SpinnerModel modelDateSpinner = setupModelDateSpinner();
-		DefaultEditor editor = setupDateSpinnerEditor();
 
-		JSpinner dateSpinner = new JSpinner(modelDateSpinner);
+		dateSpinner = new JSpinner(modelDateSpinner);
+
+		DefaultEditor editor = setupDateSpinnerEditor();
 		dateSpinner.setEditor(editor);
 
 		return dateSpinner;
