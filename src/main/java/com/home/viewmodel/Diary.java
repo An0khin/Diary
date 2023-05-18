@@ -72,7 +72,7 @@ public class Diary {
     }
     private void setupMainListeners() {
         newListener = new NewButtonListener(this);
-        openListener = new OpenButtonListener(this);
+        openListener = new OpenButtonListener();
         editListener = new EditButtonListener(this);
         deleteListener = new DeleteButtonListener(this);
     }
