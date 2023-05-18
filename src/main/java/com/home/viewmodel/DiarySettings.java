@@ -1,15 +1,10 @@
 package com.home.viewmodel;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Properties;
 
 public class DiarySettings {
-    private boolean useMySql;
-
-    private File fileIni;
+    private final File fileIni;
 
     private boolean titleCol;
     private boolean lastUpdCol;
@@ -21,22 +16,33 @@ public class DiarySettings {
         if(fileIni.exists()) {
             load();
         } else {
-            try {
-                fileIni.createNewFile();
-            } catch(Exception ex) {
-                ex.printStackTrace();
-            }
+            createFileIni(fileIni);
+        }
+    }
+    private void load() {
+        Properties prop = new Properties();
+        try(FileReader fileReader = new FileReader(fileIni)) {
+            prop.load(fileReader);
+
+            titleCol = Boolean.parseBoolean(prop.getProperty("titleCol"));
+            lastUpdCol = Boolean.parseBoolean(prop.getProperty("lastUpdCol"));
+            descriptionCol = Boolean.parseBoolean(prop.getProperty("descriptionCol"));
+
+        } catch(IOException ex) {
+            ex.printStackTrace();
 
             reset();
         }
     }
-
-    public void executeUseMySql() {
-        useMySql = !useMySql;
-        save();
+    private void createFileIni(File fileIni) {
+        try {
+            fileIni.createNewFile();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        reset();
     }
-
-    public  void setColumns(boolean[] columns) {
+    public void setColumns(boolean[] columns) {
         //0 - title; 1 - lastUpd; 2 - description
         titleCol = columns[0];
         lastUpdCol = columns[1];
@@ -44,11 +50,6 @@ public class DiarySettings {
 
         save();
     }
-
-    public boolean getUseMySql() {
-        return useMySql;
-    }
-
     public boolean[] getColumns() {
         //0 - title; 1 - lastUpd; 2 - description
         boolean[] columns = new boolean[3];
@@ -59,46 +60,24 @@ public class DiarySettings {
 
         return columns;
     }
-
-    //Load and save settings
-    public void load() {
-        Properties prop = new Properties();
-        try {
-            prop.load(new FileReader(fileIni));
-
-            useMySql = Boolean.parseBoolean(prop.getProperty("useMySql"));
-            titleCol = Boolean.parseBoolean(prop.getProperty("titleCol"));
-            lastUpdCol = Boolean.parseBoolean(prop.getProperty("lastUpdCol"));
-            descriptionCol = Boolean.parseBoolean(prop.getProperty("descriptionCol"));
-
-        } catch(Exception ex) {
-            ex.printStackTrace();
-
-            reset();
-        }
-    }
-
-    public void save() {
-        Properties prop = new Properties();
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileIni))) {
-            prop.setProperty("useMySql", String.valueOf(useMySql));
-            prop.setProperty("titleCol", String.valueOf(titleCol));
-            prop.setProperty("lastUpdCol", String.valueOf(lastUpdCol));
-            prop.setProperty("descriptionCol", String.valueOf(descriptionCol));
-
-            prop.store(new FileWriter(fileIni), "");
-
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     public void reset() {
-        useMySql = false;
         titleCol = true;
         lastUpdCol = true;
         descriptionCol = true;
 
         save();
+    }
+    private void save() {
+        Properties prop = new Properties();
+        try(FileWriter fileWriter = new FileWriter(fileIni)) {
+            prop.setProperty("titleCol", String.valueOf(titleCol));
+            prop.setProperty("lastUpdCol", String.valueOf(lastUpdCol));
+            prop.setProperty("descriptionCol", String.valueOf(descriptionCol));
+
+            prop.store(fileWriter, "");
+
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

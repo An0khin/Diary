@@ -200,10 +200,6 @@ public class Diary {
     }
 
 
-    public void executeUseMySql() {
-        diarySettings.executeUseMySql();
-    }
-
     public void saveXml(File toPath) {
         xmlManager.saveXml(toPath);
     }
