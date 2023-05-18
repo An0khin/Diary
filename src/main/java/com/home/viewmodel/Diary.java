@@ -15,21 +15,32 @@ import java.util.Date;
 import java.util.List;
 
 public class Diary {
-    private RecordList recordList;
-    private DiaryWindow diaryWindow;
-    private DiarySettings diarySettings;
-    private DiaryTable diaryTable;
-    private SideRecord sideRecord;
-    private Popup popupFrame;
+    private final DiaryWindow diaryWindow;
+    private final DiarySettings diarySettings;
+    private final DiaryTable diaryTable;
+    private final SideRecord sideRecord;
+    private final Popup popupFrame;
+
     private XMLManager xmlManager;
+    private final RecordList recordList;
     private Record currentRecord;
 
+    private NewButtonListener newListener;
     private OpenButtonListener openListener;
-    private DeleteButtonListener deleteListener;
     private EditButtonListener editListener;
-
+    private DeleteButtonListener deleteListener;
 
     private static final String DOCUMENTS_PATH = System.getProperty("user.home") + "/Documents/Diary/";
+
+    public static Date stringToDate(String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+        try {
+            return new Date(format.parse(dateString).getTime());
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
     public Diary(DiaryWindow diaryWindow) {
         this.diaryWindow = diaryWindow;
@@ -51,41 +62,52 @@ public class Diary {
 
         return new DiarySettings(fileIni);
     }
-
     private void setListeners() {
-        openListener = new OpenButtonListener(this);
-        deleteListener = new DeleteButtonListener(this);
-        editListener = new EditButtonListener(this);
-
+        setupMainListeners();
         setPopupListeners();
-        diaryWindow.recordsTable.addMouseListener(new TableSelectionListener(this, popupFrame));
-        diaryWindow.menuViewItemColumns.addActionListener(e -> new ColumnsSettingWindow(this));
 
-        NewButtonListener newListener = new NewButtonListener(this);
+        setFirstListeners();
 
-        diaryWindow.buttonNew.addActionListener(newListener);
-        diaryWindow.menuEditItemNew.addActionListener(newListener);
-        diaryWindow.menuEditItemEdit.addActionListener(editListener);
-        diaryWindow.menuEditItemDelete.addActionListener(deleteListener);
-        diaryWindow.menuFindItemFind.addActionListener(e -> new FindSettingWindow(this));
-
-        diaryWindow.menuFileItemLoad.addActionListener(new LoadButtonListener(this));
-        diaryWindow.menuFileItemSave.addActionListener(new SaveButtonListener(this));
-        diaryWindow.menuFileItemSettings.addActionListener(new SettingButtonListener(this));
+        setMenuListeners();
     }
-
+    private void setupMainListeners() {
+        newListener = new NewButtonListener(this);
+        openListener = new OpenButtonListener(this);
+        editListener = new EditButtonListener(this);
+        deleteListener = new DeleteButtonListener(this);
+    }
     private void setPopupListeners() {
         popupFrame.openButton.addActionListener(openListener);
         popupFrame.deleteButton.addActionListener(deleteListener);
         popupFrame.editButton.addActionListener(editListener);
     }
-
-    private void updateListeners() {
-        openListener.updateCurrentRecord(currentRecord);
-        deleteListener.updateCurrentRecord(currentRecord);
-        editListener.updateCurrentRecord(currentRecord);
+    private void setFirstListeners() {
+        diaryWindow.recordsTable.addMouseListener(new TableSelectionListener(this, popupFrame));
+        diaryWindow.buttonNew.addActionListener(newListener);
+    }
+    private void setMenuListeners() {
+        setMenuFileListeners();
+        setMenuEditListeners();
+        setMenuFindListeners();
+        setMenuViewListeners();
+    }
+    private void setMenuEditListeners() {
+        diaryWindow.menuEditItemNew.addActionListener(newListener);
+        diaryWindow.menuEditItemEdit.addActionListener(editListener);
+        diaryWindow.menuEditItemDelete.addActionListener(deleteListener);
+    }
+    private void setMenuFileListeners() {
+        diaryWindow.menuFileItemLoad.addActionListener(new LoadButtonListener(this));
+        diaryWindow.menuFileItemSave.addActionListener(new SaveButtonListener(this));
+        diaryWindow.menuFileItemSettings.addActionListener(new SettingButtonListener(this));
+    }
+    private void setMenuViewListeners() {
+        diaryWindow.menuViewItemColumns.addActionListener(e -> new ColumnsSettingWindow(this));
     }
 
+    private void setMenuFindListeners() {
+        diaryWindow.menuFindItemFind.addActionListener(e -> new FindSettingWindow(this));
+    }
     private void setupXml() {
         File diaryFolder = new File(DOCUMENTS_PATH);
         diaryFolder.mkdir();
@@ -128,6 +150,12 @@ public class Diary {
             Record rec = new Record(stringToDate(array[0]), array[1], stringToDate(array[2]), array[3], array[4]);
             recordList.addRecord(rec);
         }
+    }
+
+    private void updateListeners() {
+        openListener.updateCurrentRecord(currentRecord);
+        deleteListener.updateCurrentRecord(currentRecord);
+        editListener.updateCurrentRecord(currentRecord);
     }
 
     public void updateCurrentRecordByDate(Date date) {
@@ -174,11 +202,14 @@ public class Diary {
         changeTable();
     }
 
-    public void updateRecordsByFind(String dateString, String title, String description) {
+    public void selectRecordsByFind(String dateString, String title, String description) {
         diaryWindow.recordsTable.clearSelection();
 
         Record[] records = recordList.findRecords(dateString, title, description);
 
+        selectRecords(records);
+    }
+    private void selectRecords(Record[] records) {
         DefaultTableModel tableModel = diaryWindow.tableModel;
         int size = tableModel.getRowCount();
 
@@ -199,7 +230,6 @@ public class Diary {
         OpenDialog.open(currentRecord, openListener, editListener);
     }
 
-
     public void saveXml(File toPath) {
         xmlManager.saveXml(toPath);
     }
@@ -217,15 +247,5 @@ public class Diary {
         recordList.clear();
 
         changeTable();
-    }
-
-    public static Date stringToDate(String dateString) {
-        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-        try {
-            return new Date(format.parse(dateString).getTime());
-        } catch(Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 }

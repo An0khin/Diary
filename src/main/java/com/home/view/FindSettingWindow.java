@@ -33,7 +33,7 @@ public class FindSettingWindow {
         int option = JOptionPane.showConfirmDialog(null, message, "Search", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if(option == JOptionPane.OK_OPTION) {
-            diary.updateRecordsByFind(searchFieldDate.getText(), searchFieldTitle.getText(), searchFieldDescription.getText());
+            diary.selectRecordsByFind(searchFieldDate.getText(), searchFieldTitle.getText(), searchFieldDescription.getText());
         }
     }
 }
