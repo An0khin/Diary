@@ -72,7 +72,7 @@ public class DiaryTable {
 
         tableModel.fireTableDataChanged();
     }
-    public DefaultTableModel createModel(boolean[] columns) {
+    private DefaultTableModel createModel(boolean[] columns) {
         //0 - title; 1 - lastUpd; 2 - description
         List<String> columnsString = new ArrayList<>();
         columnsString.add("DATE");
