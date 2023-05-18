@@ -24,7 +24,7 @@ public class TableSelectionListener extends MouseAdapter {
 
         popupFrame.setVisible(false);
 
-        JTable table = (JTable)(e.getSource());
+        JTable table = (JTable) (e.getSource());
         Point p = e.getPoint();
         int row = table.rowAtPoint(p);
         table.setRowSelectionInterval(row, row);
@@ -38,14 +38,18 @@ public class TableSelectionListener extends MouseAdapter {
         }
 
         if(e.getButton() == MouseEvent.BUTTON3) {
-            Point mousePos = e.getLocationOnScreen();
-            mousePos.move((int) mousePos.getX() - 5, (int) mousePos.getY() - 5);
-            popupFrame.setLocation(mousePos);
-            popupFrame.setVisible(true);
+            showWindowByRightClick(e);
         } else if(e.getButton() == MouseEvent.BUTTON1) {
             if(e.getClickCount() >= 2) {
                 diary.openChoiceCurrentRecord();
             }
         }
+    }
+
+    private void showWindowByRightClick(MouseEvent event) {
+        Point mousePos = event.getLocationOnScreen();
+        mousePos.move((int) mousePos.getX() - 5, (int) mousePos.getY() - 5);
+        popupFrame.setLocation(mousePos);
+        popupFrame.setVisible(true);
     }
 }
