@@ -12,12 +12,52 @@ public class Record implements Nodeable {
     private String content;
 
     public Record(Date date, String title, Date lastUpdate, String description, String content) {
-        super();
         this.date = date;
         this.title = title;
         this.lastUpdate = lastUpdate;
         this.description = description;
         this.content = content;
+    }
+
+    public Record clone() {
+        return new Record(date, title, lastUpdate, description, content);
+    }
+
+    public static Record getNull() {
+        return new Record(null, null, null, null, null);
+    }
+
+    public List<String> getFields() {
+        List<String> fields = new ArrayList<String>();
+
+        fields.add(date.toString());
+        fields.add(title);
+        fields.add(lastUpdate.toString());
+        fields.add(description);
+        fields.add(content);
+
+        return fields;
+    }
+
+    @Override
+    public Map<String, String> getValues() {
+        Map<String, String> elements = new LinkedHashMap<>();
+
+        elements.put("title", title);
+        elements.put("lastUpdate", lastUpdate == null ? "" : lastUpdate.toString());
+        elements.put("description", description);
+        elements.put("content", content);
+
+        return elements;
+    }
+
+    @Override
+    public String[] getId() {
+        if(date == null) {
+            return new String[] {"date"};
+        }
+
+        return new String[] {"date", date.toString()};
     }
 
     public Date getDate() {
@@ -58,47 +98,5 @@ public class Record implements Nodeable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Record clone() {
-        return new Record(date, title, lastUpdate, description, content);
-    }
-
-    public List<String> getFields() {
-        List<String> fields = new ArrayList<String>();
-
-        fields.add(date.toString());
-        fields.add(title);
-        fields.add(lastUpdate.toString());
-        fields.add(description);
-        fields.add(content);
-
-        return fields;
-    }
-
-    public static Record getNull() {
-        return new Record(null, null, null, null, null);
-    }
-
-    @Override
-    public Map<String, String> getValues() {
-        Map<String, String> elements = new LinkedHashMap<>();
-
-        elements.put("date", date.toString());
-        elements.put("title", title);
-        elements.put("lastUpdate", lastUpdate.toString());
-        elements.put("description", description);
-        elements.put("content", content);
-
-        return elements;
-    }
-
-    @Override
-    public String[] getId() {
-        if(date == null) {
-            return new String[0];
-        }
-
-        return new String[] {"date", date.toString()};
     }
 }

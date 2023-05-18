@@ -1,12 +1,11 @@
-package com.home.view.listeners;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
+package com.home.viewmodel.listeners;
 
 import com.home.viewmodel.Diary;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LoadButtonListener implements ActionListener {
 	

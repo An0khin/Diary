@@ -1,12 +1,12 @@
-package com.home.view.listeners;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+package com.home.viewmodel.listeners;
 
 import com.home.model.Record;
 import com.home.viewmodel.Diary;
 
-public class DeleteButtonListener implements ActionListener {
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class DeleteButtonListener implements ActionListener, ListenerWithRecord {
 
 	Diary diary;
 	Record record;
@@ -15,11 +15,11 @@ public class DeleteButtonListener implements ActionListener {
 		super();
 		this.diary = diary;
 	}
-	
-	public void setCurrentRecord(Record record) {
+
+	@Override
+	public void updateCurrentRecord(Record record) {
 		this.record = record;
 	}
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		diary.deleteRecord(record);

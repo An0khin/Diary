@@ -1,29 +1,17 @@
-package com.home.view.listeners;
+package com.home.viewmodel.listeners;
 
-import java.awt.BorderLayout;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import com.home.model.Record;
+import com.home.viewmodel.Diary;
+
+import javax.swing.*;
+import javax.swing.JSpinner.DefaultEditor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
-import javax.swing.SpinnerModel;
-import javax.swing.JSpinner.DefaultEditor;
-
-import com.home.model.Record;
-import com.home.viewmodel.Diary;
-
-public class EditButtonListener implements ActionListener {
+public class EditButtonListener implements ActionListener, ListenerWithRecord {
 
 	Diary diary;
 	Record record;
@@ -32,8 +20,9 @@ public class EditButtonListener implements ActionListener {
 		super();
 		this.diary = diary;
 	}
-	
-	public void setCurrentRecord(Record record) {
+
+	@Override
+	public void updateCurrentRecord(Record record) {
 		this.record = record;
 	}
 
@@ -51,8 +40,8 @@ public class EditButtonListener implements ActionListener {
 			modelCurDate.setValue(record.getDate());
 				
 			JSpinner spinnerForDate = new JSpinner(modelCurDate);
-			JComponent editor = new JSpinner.DateEditor(spinnerForDate, "EEE MMM dd HH:mm:ss z yyyy");
-			((DefaultEditor) editor).getTextField().setEditable(false); //disable editing field of the date by own hands
+			DefaultEditor editor = new JSpinner.DateEditor(spinnerForDate, "EEE MMM dd HH:mm:ss z yyyy");
+			editor.getTextField().setEditable(false); //disable editing field of the date by own hands
 			spinnerForDate.setEditor(editor);
 			    
 				
@@ -85,7 +74,7 @@ public class EditButtonListener implements ActionListener {
 					"Content", contentPane
 			};
 				
-			int option = JOptionPane.showConfirmDialog(null, message, "Edit record", JOptionPane.PLAIN_MESSAGE, JOptionPane.PLAIN_MESSAGE);
+			int option = JOptionPane.showConfirmDialog(null, message, "Edit record", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 				
 			if(option == JOptionPane.OK_OPTION) {
 				int optionSave = JOptionPane.showConfirmDialog(null, "Do you want to save the changes?", "Save?", JOptionPane.YES_NO_OPTION);
