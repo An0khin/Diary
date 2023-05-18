@@ -2,7 +2,6 @@ package com.home.view;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 
 public class DiaryWindow extends JFrame {
@@ -25,7 +24,6 @@ public class DiaryWindow extends JFrame {
 
         initComponents();
     }
-
     private void initComponents() {
         diaryWindow = new JFrame("My Diary");
 
@@ -40,7 +38,6 @@ public class DiaryWindow extends JFrame {
         diaryWindowContentPane.add(mainPanel, BorderLayout.CENTER);
         diaryWindow.pack();
     }
-
     private void setDiaryWindowSettings() {
         diaryWindow.setVisible(true);
         diaryWindow.setMinimumSize(new Dimension(650, 525));
@@ -48,7 +45,6 @@ public class DiaryWindow extends JFrame {
         diaryWindowContentPane.setLayout(new BorderLayout());
         diaryWindow.setLocationRelativeTo(diaryWindow.getOwner());
     }
-
     private JMenuBar setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
@@ -173,7 +169,6 @@ public class DiaryWindow extends JFrame {
 
         return infoPanel;
     }
-
     public void setTableModel(DefaultTableModel tableModel) {
         this.tableModel = tableModel;
         recordsTable.setModel(tableModel);

@@ -196,7 +196,7 @@ public class Diary {
     }
 
     public void openChoiceCurrentRecord() {
-        new OpenDialog(currentRecord, openListener, editListener);
+        OpenDialog.open(currentRecord, openListener, editListener);
     }
 
 

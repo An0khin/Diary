@@ -1,13 +1,12 @@
 package com.home.view;
 
-import com.home.model.Record;
 import com.home.viewmodel.Diary;
 
 import javax.swing.*;
-import java.util.Date;
 
 public class FindSettingWindow {
-    private Diary diary;
+    private final Diary diary;
+
     public FindSettingWindow(Diary diary) {
         this.diary = diary;
 
