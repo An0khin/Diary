@@ -8,8 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LoadButtonListener implements ActionListener {
-	
-	Diary diary;
+	private final Diary diary;
 	
 	public LoadButtonListener(Diary diary) {
 		super();
@@ -18,7 +17,6 @@ public class LoadButtonListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		JFileChooser fc = new JFileChooser();
 		
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);

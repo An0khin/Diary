@@ -12,69 +12,131 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class NewButtonListener implements ActionListener {
+	private final Diary diary;
 
-	Diary diary;
+	int widthFields;
+	int heightFields;
+
+	private JSpinner dateSpinner;
+	private JTextField titleField;
+	private JTextArea descriptionArea;
+	private JTextArea contentArea;
 	
 	public NewButtonListener(Diary diary) {
 		this.diary = diary;
+
+		setupSizeFields();
 	}
-	
+
+	private void setupSizeFields() {
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+
+		widthFields = gd.getDisplayMode().getWidth() / 15;
+		heightFields = gd.getDisplayMode().getHeight() / 60;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		Object[] message = setupMessage();
+
+		int option = JOptionPane.showConfirmDialog(null, message, "New record", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		
-		int widthFields = gd.getDisplayMode().getWidth() / 15;
-		int heightFields = gd.getDisplayMode().getHeight() / 60;
-		
-		Date date = Calendar.getInstance().getTime();
-		
-		JPanel upperPanel = new JPanel(new BorderLayout());
-		
-		SpinnerModel modelCurDate = new SpinnerDateModel();
-		modelCurDate.setValue(date);
-		
-	    JSpinner spinnerForDate = new JSpinner(modelCurDate);
-	    JComponent editor = new JSpinner.DateEditor(spinnerForDate, "EEE MMM dd HH:mm:ss z yyyy");
-	    ((DefaultEditor) editor).getTextField().setEditable(false); //disable editing field of the date by own hands
-	    spinnerForDate.setEditor(editor);
-	    
-		JTextField titleField = new JTextField();
-		titleField.setHorizontalAlignment(JTextField.CENTER);
-		
-		upperPanel.add(spinnerForDate, BorderLayout.WEST);
-		upperPanel.add(titleField, BorderLayout.CENTER);
-		
-		
-		JTextArea descriptionField = new JTextArea(heightFields, widthFields);
-		descriptionField.setLineWrap(true);
-		JScrollPane descriptionPane = new JScrollPane(descriptionField);
-		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
-		JTextArea contentField = new JTextArea((int) (heightFields * 1.5), widthFields);
-		contentField.setLineWrap(true);
-		JScrollPane contentPane = new JScrollPane(contentField);
-		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		contentPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				
-		Object[] message = {
+		if(option == JOptionPane.OK_OPTION) {
+			confirmCreate();
+		}
+	}
+
+	private Object[] setupMessage() {
+		JPanel upperPanel = setupUpperPanel();
+		JScrollPane descriptionPane = setupDescriptionPane();
+		JScrollPane contentPane = setupContentPane();
+
+		return new Object[] {
 				upperPanel,
 				"Description", descriptionPane,
 				"Content", contentPane
 		};
-		
-		int option = JOptionPane.showConfirmDialog(null, message, "New record", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-		
-		if(option == JOptionPane.OK_OPTION) {
-			date = (Date) spinnerForDate.getValue();
-			String title = titleField.getText();
-			String description = descriptionField.getText();
-			String content = contentField.getText();
-			
-//			System.out.println("HOP");
-			
-			diary.addRecord(new Record(date, title, date, description, content));
-		}
-		
+	}
+
+	private JPanel setupUpperPanel() {
+		dateSpinner = setupDateSpinner();
+		titleField = setupTitleField();
+
+		JPanel upperPanel = new JPanel(new BorderLayout());
+
+		upperPanel.add(dateSpinner, BorderLayout.WEST);
+		upperPanel.add(titleField, BorderLayout.CENTER);
+
+		return upperPanel;
+	}
+	private JSpinner setupDateSpinner() {
+		SpinnerModel modelDateSpinner = setupModelDateSpinner();
+		DefaultEditor editor = setupDateSpinnerEditor();
+
+		JSpinner dateSpinner = new JSpinner(modelDateSpinner);
+		dateSpinner.setEditor(editor);
+
+		return dateSpinner;
+	}
+	private SpinnerModel setupModelDateSpinner() {
+		Date date = Calendar.getInstance().getTime();
+
+		SpinnerModel modelCurDate = new SpinnerDateModel();
+		modelCurDate.setValue(date);
+
+		return modelCurDate;
+	}
+	private DefaultEditor setupDateSpinnerEditor() {
+		DefaultEditor editor = new JSpinner.DateEditor(dateSpinner, "EEE MMM dd HH:mm:ss z yyyy");
+		editor.getTextField().setEditable(false);
+
+		return editor;
+	}
+	private JTextField setupTitleField() {
+		JTextField titleField = new JTextField();
+		titleField.setHorizontalAlignment(JTextField.CENTER);
+
+		return titleField;
+	}
+
+	private JScrollPane setupDescriptionPane() {
+		descriptionArea = setupDescriptionArea();
+
+		JScrollPane descriptionPane = new JScrollPane(descriptionArea);
+		descriptionPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		descriptionPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		return descriptionPane;
+	}
+	private JTextArea setupDescriptionArea() {
+		JTextArea descriptionArea = new JTextArea(heightFields, widthFields);
+		descriptionArea.setLineWrap(true);
+
+		return descriptionArea;
+	}
+
+	private JScrollPane setupContentPane() {
+		contentArea = setupContentArea();
+
+		JScrollPane contentPane = new JScrollPane(contentArea);
+		contentPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		contentPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		return contentPane;
+	}
+	private JTextArea setupContentArea() {
+		JTextArea contentArea = new JTextArea((int) (heightFields * 1.5), widthFields);
+		contentArea.setLineWrap(true);
+
+		return contentArea;
+	}
+
+	private void confirmCreate() {
+		Date date = (Date) dateSpinner.getValue();
+		String title = titleField.getText();
+		String description = descriptionArea.getText();
+		String content = contentArea.getText();
+
+		diary.addRecord(new Record(date, title, date, description, content));
 	}
 }
